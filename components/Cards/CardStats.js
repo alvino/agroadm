@@ -24,30 +24,38 @@ export default function CardStats({
                 {statTitle}
               </span>
             </div>
-            <div className="relative w-auto pl-4 flex-initial">
-              <div
-                className={
-                  "text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full " +
-                  statIconColor
-                }
-              >
-                <i className={statIconName}></i>
+            {!statIconName ? (
+              ""
+            ) : (
+              <div className="relative w-auto pl-4 flex-initial">
+                <div
+                  className={
+                    "text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full " +
+                    statIconColor
+                  }
+                >
+                  <i className={statIconName}></i>
+                </div>
               </div>
-            </div>
+            )}
           </div>
           <p className="text-sm text-gray-500 mt-4">
-            <span className={statPercentColor + " mr-2"}>
-              <i
-                className={
-                  statArrow === "up"
-                    ? "fas fa-arrow-up"
-                    : statArrow === "down"
-                    ? "fas fa-arrow-down"
-                    : ""
-                }
-              ></i>{" "}
-              {statPercent}%
-            </span>
+            {!statPercent ? (
+              ""
+            ) : (
+              <span className={statPercentColor + " mr-2"}>
+                <i
+                  className={
+                    statArrow === "up"
+                      ? "fas fa-arrow-up"
+                      : statArrow === "down"
+                      ? "fas fa-arrow-down"
+                      : ""
+                  }
+                ></i>{" "}
+                {statPercent}%
+              </span>
+            )}
             <span className="whitespace-no-wrap">{statDescripiron}</span>
           </p>
         </div>
