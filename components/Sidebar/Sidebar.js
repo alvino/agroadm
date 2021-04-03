@@ -5,6 +5,74 @@ import { useRouter } from "next/router";
 import NotificationDropdown from "components/Dropdowns/NotificationDropdown.js";
 import UserDropdown from "components/Dropdowns/UserDropdown.js";
 
+function LinkSidebarExterno(props) {
+  return (
+    <>
+      <a
+        href={props.href}
+        target="_blank"
+        className="text-gray-800 hover:text-gray-600 text-sm block mb-4 no-underline font-semibold"
+      >
+        <i className={`${props.classIcon} mr-2 text-gray-400 text-base`}></i>
+        {props.children}
+      </a>
+    </>
+  );
+}
+
+function LinkSidebarInterno(props) {
+  const router = useRouter();
+  return (
+    <>
+      <Link href={props.href}>
+        <a
+          href="#pablo"
+          className={
+            "text-xs uppercase py-3 font-bold block " +
+            (router.pathname.indexOf(props.href) !== -1
+              ? "text-blue-500 hover:text-blue-600"
+              : "text-gray-800 hover:text-gray-600")
+          }
+        >
+          <i
+            className={
+              `${props.classIcon} mr-2 text-sm ` +
+              (router.pathname.indexOf(props.href) !== -1
+                ? "opacity-75"
+                : "text-gray-400")
+            }
+          ></i>
+          {props.children}
+        </a>
+      </Link>
+    </>
+  );
+}
+
+function Navigator(props) {
+  return (
+    <>
+      {/* Divider */}
+      <hr className="my-4 md:min-w-full" />
+      {/* Heading */}
+      {!props.titulo ? (
+        ""
+      ) : (
+        <h6 className="md:min-w-full text-gray-600 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
+          {props.titulo}
+        </h6>
+      )}
+      {/* Navigation */}
+
+      <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
+        {Array(props.children).map((child) => (
+          <li className="items-center">{child}</li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
 export default function Sidebar() {
   const [collapseShow, setCollapseShow] = React.useState("hidden");
   const router = useRouter();
@@ -80,324 +148,94 @@ export default function Sidebar() {
               </div>
             </form>
 
-            {/* Divider */}
-            <hr className="my-4 md:min-w-full" />
-            {/* Heading 
-            <h6 className="md:min-w-full text-gray-600 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
-              
-            </h6>*/}
-            {/* Navigation */}
+            <Navigator>
+              <LinkSidebarInterno href="/admin/dashboard" classIcon="fas fa-tv">
+                dashboard
+              </LinkSidebarInterno>
 
-            <ul className="md:flex-col md:min-w-full flex flex-col list-none">
-              <li className="items-center">
-                <Link href="/admin/dashboard">
-                  <a
-                    href="#pablo"
-                    className={
-                      "text-xs uppercase py-3 font-bold block " +
-                      (router.pathname.indexOf("/admin/dashboard") !== -1
-                        ? "text-blue-500 hover:text-blue-600"
-                        : "text-gray-800 hover:text-gray-600")
-                    }
-                  >
-                    <i
-                      className={
-                        "fas fa-tv mr-2 text-sm " +
-                        (router.pathname.indexOf("/admin/dashboard") !== -1
-                          ? "opacity-75"
-                          : "text-gray-400")
-                      }
-                    ></i>{" "}
-                    Dashboard
-                  </a>
-                </Link>
-              </li>
+              <LinkSidebarInterno
+                href="/admin/pasto"
+                classIcon="fas fa-laptop-house"
+              >
+                pasto
+              </LinkSidebarInterno>
 
-              {/* <li className="items-center">
-                <Link href="/admin/fazenda">
-                  <a
-                    href="#pablo"
-                    className={
-                      "text-xs uppercase py-3 font-bold block " +
-                      (router.pathname.indexOf("/admin/fazenda") !== -1
-                        ? "text-blue-500 hover:text-blue-600"
-                        : "text-gray-800 hover:text-gray-600")
-                    }
-                  >
-                    <i
-                      className={
-                        "fas fa-laptop-house mr-2 text-sm " +
-                        (router.pathname.indexOf("/admin/fazenda") !== -1
-                          ? "opacity-75"
-                          : "text-gray-400")
-                      }
-                    ></i>{" "}
-                  Fazenda
-                  </a>
-                </Link>
-              </li> */}
+              <LinkSidebarInterno
+                href="/admin/settings"
+                classIcon="fas fa-tools"
+              >
+                settings
+              </LinkSidebarInterno>
 
-              <li className="items-center">
-                <Link href="/admin/pasto">
-                  <a
-                    href="#pablo"
-                    className={
-                      "text-xs uppercase py-3 font-bold block " +
-                      (router.pathname.indexOf("/admin/pasto") !== -1
-                        ? "text-blue-500 hover:text-blue-600"
-                        : "text-gray-800 hover:text-gray-600")
-                    }
-                  >
-                    <i
-                      className={
-                        "fas fa-laptop-house mr-2 text-sm " +
-                        (router.pathname.indexOf("/admin/pasto") !== -1
-                          ? "opacity-75"
-                          : "text-gray-400")
-                      }
-                    ></i>{" "}
-                    Pasto
-                  </a>
-                </Link>
-              </li>
+              <LinkSidebarInterno href="/admin/tables" classIcon="fas fa-table">
+                tables
+              </LinkSidebarInterno>
 
-              <li className="items-center">
-                <Link href="/admin/settings">
-                  <a
-                    href="#pablo"
-                    className={
-                      "text-xs uppercase py-3 font-bold block " +
-                      (router.pathname.indexOf("/admin/settings") !== -1
-                        ? "text-blue-500 hover:text-blue-600"
-                        : "text-gray-800 hover:text-gray-600")
-                    }
-                  >
-                    <i
-                      className={
-                        "fas fa-tools mr-2 text-sm " +
-                        (router.pathname.indexOf("/admin/settings") !== -1
-                          ? "opacity-75"
-                          : "text-gray-400")
-                      }
-                    ></i>{" "}
-                    Settings
-                  </a>
-                </Link>
-              </li>
+              <LinkSidebarInterno
+                href="/admin/maps"
+                classIcon="fas fa-map-marked"
+              >
+                Maps
+              </LinkSidebarInterno>
+            </Navigator>
 
-              <li className="items-center">
-                <Link href="/admin/tables">
-                  <a
-                    href="#pablo"
-                    className={
-                      "text-xs uppercase py-3 font-bold block " +
-                      (router.pathname.indexOf("/admin/tables") !== -1
-                        ? "text-blue-500 hover:text-blue-600"
-                        : "text-gray-800 hover:text-gray-600")
-                    }
-                  >
-                    <i
-                      className={
-                        "fas fa-table mr-2 text-sm " +
-                        (router.pathname.indexOf("/admin/tables") !== -1
-                          ? "opacity-75"
-                          : "text-gray-400")
-                      }
-                    ></i>{" "}
-                    Tables
-                  </a>
-                </Link>
-              </li>
+            <Navigator titulo="Documentation">
+              <LinkSidebarExterno
+                href="https://www.creative-tim.com/learning-lab/tailwind/nextjs/colors/notus"
+                classIcon="fas fa-paint-brush"
+              >
+                Styles
+              </LinkSidebarExterno>
 
-              <li className="items-center">
-                <Link href="/admin/maps">
-                  <a
-                    href="#pablo"
-                    className={
-                      "text-xs uppercase py-3 font-bold block " +
-                      (router.pathname.indexOf("/admin/maps") !== -1
-                        ? "text-blue-500 hover:text-blue-600"
-                        : "text-gray-800 hover:text-gray-600")
-                    }
-                  >
-                    <i
-                      className={
-                        "fas fa-map-marked mr-2 text-sm " +
-                        (router.pathname.indexOf("/admin/maps") !== -1
-                          ? "opacity-75"
-                          : "text-gray-400")
-                      }
-                    ></i>{" "}
-                    Maps
-                  </a>
-                </Link>
-              </li>
-            </ul>
+              <LinkSidebarExterno
+                href="https://www.creative-tim.com/learning-lab/tailwind/nextjs/alerts/notus"
+                classIcon="fab fa-css3-alt"
+              >
+                CSS Components
+              </LinkSidebarExterno>
 
-            {/* Divider 
-            <hr className="my-4 md:min-w-full" />*/}
-            {/* Heading 
-            <h6 className="md:min-w-full text-gray-600 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
-              Auth Layout Pages
-            </h6>*/}
-            {/* Navigation 
+              <LinkSidebarExterno
+                href="https://www.creative-tim.com/learning-lab/tailwind/angular/overview/notus"
+                classIcon="fab fa-angular"
+              >
+                Angular
+              </LinkSidebarExterno>
 
-            <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
-              <li className="items-center">
-                <Link href="/auth/login">
-                  <a
-                    href="#pablo"
-                    className="text-gray-800 hover:text-gray-600 text-xs uppercase py-3 font-bold block"
-                  >
-                    <i className="fas fa-fingerprint text-gray-500 mr-2 text-sm"></i>{" "}
-                    Login
-                  </a>
-                </Link>
-              </li>
+              <LinkSidebarExterno
+                href="https://www.creative-tim.com/learning-lab/tailwind/js/overview/notus"
+                classIcon="fab fa-js-square"
+              >
+                Javascript
+              </LinkSidebarExterno>
 
-              <li className="items-center">
-                <Link href="/auth/register">
-                  <a
-                    href="#pablo"
-                    className="text-gray-800 hover:text-gray-600 text-xs uppercase py-3 font-bold block"
-                  >
-                    <i className="fas fa-clipboard-list text-gray-400 mr-2 text-sm"></i>{" "}
-                    Register
-                  </a>
-                </Link>
-              </li>
-            </ul>
-*/}
-            {/* Divider */}
-            <hr className="my-4 md:min-w-full" />
-            {/* Heading */}
-            <h6 className="md:min-w-full text-gray-600 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
-              No Layout Pages
-            </h6>
-            {/* Navigation */}
+              <LinkSidebarExterno
+                href="https://www.creative-tim.com/learning-lab/tailwind/nextjs/overview/notus"
+                classIcon="fab fa-react"
+              >
+                NextJS
+              </LinkSidebarExterno>
 
-            <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
-              <li className="items-center">
-                <Link href="/landing">
-                  <a
-                    href="#pablo"
-                    className="text-gray-800 hover:text-gray-600 text-xs uppercase py-3 font-bold block"
-                  >
-                    <i className="fas fa-newspaper text-gray-500 mr-2 text-sm"></i>{" "}
-                    Landing Page
-                  </a>
-                </Link>
-              </li>
+              <LinkSidebarExterno
+                href="https://www.creative-tim.com/learning-lab/tailwind/react/overview/notus"
+                classIcon="fab fa-react"
+              >
+                React
+              </LinkSidebarExterno>
 
-              <li className="items-center">
-                <Link href="/profile">
-                  <a
-                    href="#pablo"
-                    className="text-gray-800 hover:text-gray-600 text-xs uppercase py-3 font-bold block"
-                  >
-                    <i className="fas fa-user-circle text-gray-500 mr-2 text-sm"></i>{" "}
-                    Profile Page
-                  </a>
-                </Link>
-              </li>
-            </ul>
+              <LinkSidebarExterno
+                href="https://www.creative-tim.com/learning-lab/tailwind/svelte/overview/notus"
+                classIcon="fas fa-link"
+              >
+                Svelte
+              </LinkSidebarExterno>
 
-            {/* Divider */}
-            <hr className="my-4 md:min-w-full" />
-            {/* Heading */}
-            <h6 className="md:min-w-full text-gray-600 text-xs uppercase font-bold block pt-1 pb-4 no-underline">
-              Documentation
-            </h6>
-            {/* Navigation */}
-            <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
-              <li className="inline-flex">
-                <a
-                  href="https://www.creative-tim.com/learning-lab/tailwind/nextjs/colors/notus"
-                  target="_blank"
-                  className="text-gray-800 hover:text-gray-600 text-sm block mb-4 no-underline font-semibold"
-                >
-                  <i className="fas fa-paint-brush mr-2 text-gray-400 text-base"></i>
-                  Styles
-                </a>
-              </li>
-
-              <li className="inline-flex">
-                <a
-                  href="https://www.creative-tim.com/learning-lab/tailwind/nextjs/alerts/notus"
-                  target="_blank"
-                  className="text-gray-800 hover:text-gray-600 text-sm block mb-4 no-underline font-semibold"
-                >
-                  <i className="fab fa-css3-alt mr-2 text-gray-400 text-base"></i>
-                  CSS Components
-                </a>
-              </li>
-
-              <li className="inline-flex">
-                <a
-                  href="https://www.creative-tim.com/learning-lab/tailwind/angular/overview/notus"
-                  target="_blank"
-                  className="text-gray-800 hover:text-gray-600 text-sm block mb-4 no-underline font-semibold"
-                >
-                  <i className="fab fa-angular mr-2 text-gray-400 text-base"></i>
-                  Angular
-                </a>
-              </li>
-
-              <li className="inline-flex">
-                <a
-                  href="https://www.creative-tim.com/learning-lab/tailwind/js/overview/notus"
-                  target="_blank"
-                  className="text-gray-800 hover:text-gray-600 text-sm block mb-4 no-underline font-semibold"
-                >
-                  <i className="fab fa-js-square mr-2 text-gray-400 text-base"></i>
-                  Javascript
-                </a>
-              </li>
-
-              <li className="inline-flex">
-                <a
-                  href="https://www.creative-tim.com/learning-lab/tailwind/nextjs/overview/notus"
-                  target="_blank"
-                  className="text-gray-800 hover:text-gray-600 text-sm block mb-4 no-underline font-semibold"
-                >
-                  <i className="fab fa-react mr-2 text-gray-400 text-base"></i>
-                  NextJS
-                </a>
-              </li>
-
-              <li className="inline-flex">
-                <a
-                  href="https://www.creative-tim.com/learning-lab/tailwind/react/overview/notus"
-                  target="_blank"
-                  className="text-gray-800 hover:text-gray-600 text-sm block mb-4 no-underline font-semibold"
-                >
-                  <i className="fab fa-react mr-2 text-gray-400 text-base"></i>
-                  React
-                </a>
-              </li>
-
-              <li className="inline-flex">
-                <a
-                  href="https://www.creative-tim.com/learning-lab/tailwind/svelte/overview/notus"
-                  target="_blank"
-                  className="text-gray-800 hover:text-gray-600 text-sm block mb-4 no-underline font-semibold"
-                >
-                  <i className="fas fa-link mr-2 text-gray-400 text-base"></i>
-                  Svelte
-                </a>
-              </li>
-
-              <li className="inline-flex">
-                <a
-                  href="https://www.creative-tim.com/learning-lab/tailwind/vue/overview/notus"
-                  target="_blank"
-                  className="text-gray-800 hover:text-gray-600 text-sm block mb-4 no-underline font-semibold"
-                >
-                  <i className="fab fa-vuejs mr-2 text-gray-400 text-base"></i>
-                  VueJS
-                </a>
-              </li>
-            </ul>
+              <LinkSidebarExterno
+                href="https://www.creative-tim.com/learning-lab/tailwind/vue/overview/notus"
+                classIcon="fab fa-vuejs"
+              >
+                VueJS
+              </LinkSidebarExterno>
+            </Navigator>
           </div>
         </div>
       </nav>

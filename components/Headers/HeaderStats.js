@@ -4,7 +4,6 @@ import fb from "../../server/firebase";
 // components
 
 import CardStats from "components/Cards/CardStats.js";
-import CardStatsPasto from "components/Cards/CardStatsPasto";
 
 export default function HeaderStats() {
   const storageFazenda = JSON.parse(sessionStorage.getItem("fazenda"));
