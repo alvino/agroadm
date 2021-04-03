@@ -1,19 +1,52 @@
 import React from "react";
+import { useRouter } from "next/router";
 
-import fb from "../../../server/firebase";
+import fb from "../../server/firebase";
 
-import firebase from 'firebase'
+import firebase from "firebase";
 
+import isEmpty from "../../util/isEmpty";
 // components
 import MapExample from "components/Maps/MapExample.js";
 
 export default function CardSettings() {
-  const propriedade = React.useRef();
-  const cidade = React.useRef();
-  const estado = React.useRef();
-  const codPostal = React.useRef();
+  const router = useRouter();
+
+  const pasto = React.useRef();
+  const area = React.useRef();
 
   const [markers, setMarkers] = React.useState([]);
+  const [posicao, setPosicao] = React.useState({});
+
+  const [id, setId] = React.useState(null);
+
+  const storageFazenda = JSON.parse(sessionStorage.getItem("fazenda"));
+
+  React.useEffect(() => {
+    if (storageFazenda) {
+      setPosicao({
+        lat: storageFazenda.marker.latitude,
+        lng: storageFazenda.marker.longitude,
+      });
+    }
+  }, []);
+
+  React.useEffect(() => {
+    const query = router.query;
+
+    if (!isEmpty(query)) {
+      pasto.current.value = query.descricao;
+      area.current.value = query.area;
+      setMarkers([
+        { lat: parseFloat(query.latitude), lng: parseFloat(query.longitude) },
+      ]);
+      setPosicao({
+        lat: parseFloat(query.latitude),
+        lng: parseFloat(query.longitude),
+      });
+      setId(query.id);
+    }
+  }, []);
 
   const handleMarkerClick = (event) => {
     setMarkers([{ lat: event.latLng.lat(), lng: event.latLng.lng() }]);
@@ -21,17 +54,20 @@ export default function CardSettings() {
 
   const handleSalvar = async (event) => {
     const data = {
-      descricao: propriedade.current.value,
-      cidade: cidade.current.value,
-      estado: estado.current.value,
-      codigoPostal: codPostal.current.value,
+      descricao: pasto.current.value,
+      area: area.current.value,
       marker: new firebase.firestore.GeoPoint(markers[0].lat, markers[0].lng),
     };
 
-    const db = fb.firestore()
+    const db = fb.firestore();
+    const fazendaRef = db.collection("fazenda").doc(storageFazenda.id);
+    const pastoRef = id
+      ? fazendaRef.collection("pasto").doc(id)
+      : fazendaRef.collection("pasto").doc();
 
-    db.collection("fazenda").doc().set(data);
-  
+    pastoRef.set(data).then(() => {
+      router.push("dashboard");
+    });
   };
 
   return (
@@ -40,7 +76,7 @@ export default function CardSettings() {
         <div className="rounded-t bg-white mb-0 px-6 py-6">
           <div className="text-center flex justify-between">
             <h6 className="text-gray-800 text-xl font-bold">
-              Cadastra Fazenda
+              Cadastra Pastagem
             </h6>
             <button
               className="bg-gray-800 active:bg-gray-700 text-white font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
@@ -57,7 +93,12 @@ export default function CardSettings() {
               Marque uma localização
             </h6>
             <div className="flex flex-wrap">
-              <MapExample onMarkerClick={handleMarkerClick} markers={markers} />
+              <MapExample
+                onMarkerClick={handleMarkerClick}
+                markers={markers}
+                defaultCenter={posicao}
+                zoom={16}
+              />
               <label
                 className="block uppercase text-gray-700 text-xs font-bold mb-2"
                 htmlFor="grid-password"
@@ -74,67 +115,36 @@ export default function CardSettings() {
               Informações
             </h6>
             <div className="flex flex-wrap">
-              <div className="w-full lg:w-12/12 px-4">
+              <div className="w-full lg:w-6/12 px-4">
                 <div className="relative w-full mb-3">
                   <label
                     className="block uppercase text-gray-700 text-xs font-bold mb-2"
                     htmlFor="grid-password"
                   >
-                    Nome da propriedade
+                    Descrição do pasto
                   </label>
                   <input
                     type="text"
-                    ref={propriedade}
+                    ref={pasto}
                     className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
-                    defaultValue="Fazenda ...."
+                    defaultValue="Pasto ...."
                   />
                 </div>
               </div>
-              <div className="w-full lg:w-4/12 px-4">
+              <div className="w-full lg:w-6/12 px-4">
                 <div className="relative w-full mb-3">
                   <label
                     className="block uppercase text-gray-700 text-xs font-bold mb-2"
                     htmlFor="grid-password"
                   >
-                    Cidade
+                    Área (ha)
                   </label>
                   <input
-                    type="text"
-                    ref={cidade}
+                    type="number"
+                    step="0.1"
+                    ref={area}
                     className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
-                    defaultValue="Alto Horizonte"
-                  />
-                </div>
-              </div>
-              <div className="w-full lg:w-4/12 px-4">
-                <div className="relative w-full mb-3">
-                  <label
-                    className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="grid-password"
-                  >
-                    Estado
-                  </label>
-                  <input
-                    type="text"
-                    ref={estado}
-                    className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
-                    defaultValue="Goias"
-                  />
-                </div>
-              </div>
-              <div className="w-full lg:w-4/12 px-4">
-                <div className="relative w-full mb-3">
-                  <label
-                    className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="grid-password"
-                  >
-                    Codigo Postal
-                  </label>
-                  <input
-                    type="text"
-                    ref={codPostal}
-                    className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
-                    defaultValue="76560000"
+                    defaultValue="0"
                   />
                 </div>
               </div>

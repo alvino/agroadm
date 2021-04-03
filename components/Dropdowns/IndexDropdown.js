@@ -2,11 +2,37 @@ import React from "react";
 import Link from "next/link";
 import { createPopper } from "@popperjs/core";
 
+import fb from "../../server/firebase";
+import { isPropertySignature } from "typescript";
+
+const LinkDropdown = (props) => {
+  const handleOnClick = () => {
+    sessionStorage.setItem("fazenda", JSON.stringify(props.data));
+  };
+
+  return (
+    <>
+      <Link href={props.href}>
+        <a
+          href="#pablo"
+          className={
+            "text-sm py-2 px-4 font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800"
+          }
+          onClick={handleOnClick}
+        >
+          {props.children}
+        </a>
+      </Link>
+    </>
+  );
+};
+
 const IndexDropdown = () => {
   // dropdown props
   const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);
   const btnDropdownRef = React.createRef();
   const popoverDropdownRef = React.createRef();
+
   const openDropdownPopover = () => {
     createPopper(btnDropdownRef.current, popoverDropdownRef.current, {
       placement: "bottom-start",
@@ -16,6 +42,28 @@ const IndexDropdown = () => {
   const closeDropdownPopover = () => {
     setDropdownPopoverShow(false);
   };
+
+  const [fazendas, setFazendas] = React.useState([]);
+
+  React.useEffect(() => {
+    async function init() {
+      const db = fb.firestore();
+
+      const fazendaRef = db.collection("fazenda");
+
+      const snapshot = await fazendaRef.get();
+
+      const data = await snapshot.docs.map((item) => ({
+        id: item.id,
+        path: item.ref.path,
+        ...item.data(),
+      }));
+      setFazendas(data);
+    }
+
+    init();
+  }, []);
+
   return (
     <>
       <a
@@ -27,7 +75,7 @@ const IndexDropdown = () => {
           dropdownPopoverShow ? closeDropdownPopover() : openDropdownPopover();
         }}
       >
-        Demo Pages
+        Fazendas
       </a>
       <div
         ref={popoverDropdownRef}
@@ -36,53 +84,18 @@ const IndexDropdown = () => {
           "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48"
         }
       >
-        <span
-          className={
-            "text-sm pt-2 pb-0 px-4 font-bold block w-full whitespace-no-wrap bg-transparent text-gray-500"
-          }
-        >
-          Admin Layout
-        </span>
-        <Link href="/admin/dashboard">
-          <a
-            href="#pablo"
-            className={
-              "text-sm py-2 px-4 font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800"
-            }
-          >
-            Dashboard
-          </a>
-        </Link>
-        <Link href="/admin/settings">
-          <a
-            href="#pablo"
-            className={
-              "text-sm py-2 px-4 font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800"
-            }
-          >
-            Settings
-          </a>
-        </Link>
-        <Link href="/admin/tables">
-          <a
-            href="#pablo"
-            className={
-              "text-sm py-2 px-4 font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800"
-            }
-          >
-            Tables
-          </a>
-        </Link>
-        <Link href="/admin/maps">
-          <a
-            href="#pablo"
-            className={
-              "text-sm py-2 px-4 font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800"
-            }
-          >
-            Maps
-          </a>
-        </Link>
+        {fazendas.map((item, index) => {
+          return (
+            <LinkDropdown key={index} href={`/admin/dashboard`} data={item}>
+              {item.descricao}
+            </LinkDropdown>
+          );
+        })}
+
+        {/* <LinkDropdown href="/admin/dashboard">Dashboard</LinkDropdown>
+        <LinkDropdown href="/admin/settings">Settings</LinkDropdown>
+        <LinkDropdown href="/admin/tables">Tables</LinkDropdown>
+        <LinkDropdown href="/admin/maps">Maps</LinkDropdown>
         <div className="h-0 mx-4 my-2 border border-solid border-gray-200" />
         <span
           className={
@@ -138,7 +151,7 @@ const IndexDropdown = () => {
           >
             Profile
           </a>
-        </Link>
+        </Link> */}
       </div>
     </>
   );
