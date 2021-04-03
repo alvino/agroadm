@@ -7,72 +7,47 @@ import {
   Marker,
 } from "react-google-maps";
 
+const YOUR_KEY_HERE = "AIzaSyD3Sb5-qY0H1gba_zSU7GWvtJIvNIwtOQo";
+
 const MapExampleScript = withScriptjs(
   withGoogleMap((props) => (
     <GoogleMap
-      defaultZoom={12}
-      defaultCenter={{ lat: 40.748817, lng: -73.985428 }}
-      defaultOptions={{
-        scrollwheel: false,
-        styles: [
-          {
-            featureType: "administrative",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#444444" }],
-          },
-          {
-            featureType: "landscape",
-            elementType: "all",
-            stylers: [{ color: "#f2f2f2" }],
-          },
-          {
-            featureType: "poi",
-            elementType: "all",
-            stylers: [{ visibility: "off" }],
-          },
-          {
-            featureType: "road",
-            elementType: "all",
-            stylers: [{ saturation: -100 }, { lightness: 45 }],
-          },
-          {
-            featureType: "road.highway",
-            elementType: "all",
-            stylers: [{ visibility: "simplified" }],
-          },
-          {
-            featureType: "road.arterial",
-            elementType: "labels.icon",
-            stylers: [{ visibility: "off" }],
-          },
-          {
-            featureType: "transit",
-            elementType: "all",
-            stylers: [{ visibility: "off" }],
-          },
-          {
-            featureType: "water",
-            elementType: "all",
-            stylers: [{ color: "#cbd5e0" }, { visibility: "on" }],
-          },
-        ],
-      }}
+      defaultZoom={props.zoom || 12}
+      defaultCenter={props.defaultCenter || { lat: 40.748817, lng: -73.985428 }}
+      defaultMapTypeId="satellite"
+      onClick={props.onMarkerClick}
     >
-      <Marker position={{ lat: 40.748817, lng: -73.985428 }} />
+      {props.markers.map((marker, index) => {
+        return (
+          <Marker
+            key={`marker${index}`}
+            position={{ lat: marker.lat, lng: marker.lng }}
+          />
+        );
+      })}
     </GoogleMap>
   ))
 );
 
-const YOUR_KEY_HERE ="AIzaSyD3Sb5-qY0H1gba_zSU7GWvtJIvNIwtOQo"
+function MapExample(props) {
+  const [position, setPosition] = React.useState(null);
 
+  React.useEffect(() => {
+    navigator.geolocation.getCurrentPosition(function (geo) {
+      setPosition({ lat: geo.coords.latitude, lng: geo.coords.longitude });
+    });
+  }, []);
 
-function MapExample() {
   return (
     <MapExampleScript
-      googleMapURL= {`https://maps.googleapis.com/maps/api/js?key=${YOUR_KEY_HERE}`}
+      googleMapURL={`https://maps.googleapis.com/maps/api/js?key=${YOUR_KEY_HERE}`}
       loadingElement={<div className="h-full" />}
-      containerElement={<div className="relative w-full rounded h-600-px" />}
+      containerElement={<div className="relative w-full rounded h-500-px" />}
       mapElement={<div className="rounded h-full" />}
+      onMarkerClick={props.onMarkerClick}
+      markers={props.markers || []}
+      defaultCenter={props.defaultCenter || position}
+      {...props}
     />
   );
 }
