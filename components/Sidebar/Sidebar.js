@@ -113,7 +113,7 @@ export default function Sidebar() {
                 </Link>
               </li>
 
-              <li className="items-center">
+              {/* <li className="items-center">
                 <Link href="/admin/fazenda">
                   <a
                     href="#pablo"
@@ -133,6 +133,30 @@ export default function Sidebar() {
                       }
                     ></i>{" "}
                   Fazenda
+                  </a>
+                </Link>
+              </li> */}
+
+              <li className="items-center">
+                <Link href="/admin/pasto">
+                  <a
+                    href="#pablo"
+                    className={
+                      "text-xs uppercase py-3 font-bold block " +
+                      (router.pathname.indexOf("/admin/pasto") !== -1
+                        ? "text-blue-500 hover:text-blue-600"
+                        : "text-gray-800 hover:text-gray-600")
+                    }
+                  >
+                    <i
+                      className={
+                        "fas fa-laptop-house mr-2 text-sm " +
+                        (router.pathname.indexOf("/admin/pasto") !== -1
+                          ? "opacity-75"
+                          : "text-gray-400")
+                      }
+                    ></i>{" "}
+                    Pasto
                   </a>
                 </Link>
               </li>
