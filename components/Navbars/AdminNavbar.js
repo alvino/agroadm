@@ -3,6 +3,14 @@ import React from "react";
 import UserDropdown from "components/Dropdowns/UserDropdown.js";
 
 export default function Navbar() {
+
+  const [titulo, setTitulo] = React.useState()
+  
+  React.useEffect( ()=>{
+    const data = JSON.parse(sessionStorage.getItem('fazenda'))
+    setTitulo( !data ? "Dashboard" : data.descricao )
+  }, [])
+
   return (
     <>
       {/* Navbar */}
@@ -10,11 +18,11 @@ export default function Navbar() {
         <div className="w-full mx-autp items-center flex justify-between md:flex-no-wrap flex-wrap md:px-10 px-4">
           {/* Brand */}
           <a
-            className="text-white text-sm uppercase hidden lg:inline-block font-semibold"
+            className="text-white text uppercase hidden lg:inline-block font-semibold"
             href="#pablo"
             onClick={(e) => e.preventDefault()}
           >
-            Dashboard
+            {titulo}
           </a>
           {/* Form 
           <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">
