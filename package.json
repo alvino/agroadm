@@ -28,6 +28,7 @@
     "react-google-maps": "9.4.5",
     "react-scripts": "3.4.3",
     "styled-components": "^5.2.3",
+    "swr": "^0.5.5",
     "tailwindcss": "1.8.10",
     "webpack": "4.44.2"
   },
