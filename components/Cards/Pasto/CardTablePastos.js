@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 
-import fb from "../../server/firebase";
+import fb from "../../../server/firebase";
 // components
 
 export default function CardTablePastos() {
@@ -13,9 +13,9 @@ export default function CardTablePastos() {
     const init = async () => {
       const db = fb.firestore();
       const fazendaRef = db.collection("fazenda").doc(storageFazenda.id);
-      const pastoRef = fazendaRef.collection("pasto");
+      const pastoOrderRef = fazendaRef.collection("pasto").orderBy("descricao");
 
-      const snapshot = await pastoRef.get();
+      const snapshot = await pastoOrderRef.get();
 
       const data = snapshot.docs.map((item) => ({
         id: item.id,

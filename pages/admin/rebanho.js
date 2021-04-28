@@ -1,6 +1,6 @@
 import React from "react";
 // components
-import CardPastoSettings from "components/Cards/Pasto/CardPastoSettings";
+import CardRebanhoSettings from "components/Cards/Rebanho/CardRebanhoSettings";
 
 // layout for page
 import Admin from "layouts/Admin.js";
@@ -10,7 +10,7 @@ export default function Fazenda() {
     <>
       <div className="flex flex-wrap">
         <div className="w-full  px-4">
-          <CardPastoSettings />
+          <CardRebanhoSettings />
         </div>
       </div>
     </>

@@ -155,9 +155,16 @@ export default function Sidebar() {
 
               <LinkSidebarInterno
                 href="/admin/pasto"
-                classIcon="fas fa-laptop-house"
+                classIcon="fas fa-vector-square"
               >
                 pasto
+              </LinkSidebarInterno>
+
+              <LinkSidebarInterno
+                href="/admin/rebanho"
+                classIcon="fas fa-vector-square"
+              >
+                rebanho
               </LinkSidebarInterno>
 
               <LinkSidebarInterno

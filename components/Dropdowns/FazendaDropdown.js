@@ -2,8 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { createPopper } from "@popperjs/core";
 
-import fb from "../../server/firebase";
-import { isPropertySignature } from "typescript";
+import axios from "../../server/axios";
 
 const LinkDropdown = (props) => {
   const handleOnClick = () => {
@@ -27,7 +26,7 @@ const LinkDropdown = (props) => {
   );
 };
 
-const IndexDropdown = () => {
+const FazendaDropdown = () => {
   // dropdown props
   const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);
   const btnDropdownRef = React.createRef();
@@ -47,18 +46,8 @@ const IndexDropdown = () => {
 
   React.useEffect(() => {
     async function init() {
-      const db = fb.firestore();
-
-      const fazendaRef = db.collection("fazenda");
-
-      const snapshot = await fazendaRef.get();
-
-      const data = await snapshot.docs.map((item) => ({
-        id: item.id,
-        path: item.ref.path,
-        ...item.data(),
-      }));
-      setFazendas(data);
+      const resp = await axios.get("fazenda");
+      setFazendas(resp.data);
     }
 
     init();
@@ -157,4 +146,4 @@ const IndexDropdown = () => {
   );
 };
 
-export default IndexDropdown;
+export default FazendaDropdown;

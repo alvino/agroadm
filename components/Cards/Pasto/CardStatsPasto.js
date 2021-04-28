@@ -1,6 +1,6 @@
 import React from "react";
 
-import fb from "../../server/firebase";
+import fb from "../../../server/firebase";
 
 export default function CardStats() {
   const storageFazenda = JSON.parse(sessionStorage.getItem("fazenda"));

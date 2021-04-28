@@ -53,7 +53,7 @@ export default function HeaderStats() {
               </div>
               <div className="w-full lg:w-6/12 xl:w-3/12 px-4">
                 <CardStats
-                  statSubtitle="Area (ha)"
+                  statSubtitle="Area (hectare)"
                   statTitle={pastos.reduce(
                     (acc, item) => (acc += parseFloat(item.area)),
                     0
@@ -61,7 +61,7 @@ export default function HeaderStats() {
                   statArrow={null}
                   statPercent={null}
                   statPercentColor={null}
-                  statDescripiron="Total de área"
+                  statDescripiron="Total de área (ha)"
                   statIconName={null}
                   statIconColor={null}
                 />

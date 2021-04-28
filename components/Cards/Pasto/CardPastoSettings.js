@@ -1,13 +1,13 @@
 import React from "react";
 import { useRouter } from "next/router";
 
-import fb from "../../server/firebase";
+import fb from "../../../server/firebase";
 
 import firebase from "firebase";
 
-import isEmpty from "../../util/isEmpty";
+import isEmpty from "../../../util/isEmpty";
 // components
-import MapExample from "components/Maps/MapExample.js";
+import MapExample from "../../Maps/MapExample.js";
 
 export default function CardSettings() {
   const router = useRouter();

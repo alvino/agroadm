@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 // components
 
-import IndexDropdown from "components/Dropdowns/IndexDropdown.js";
+import FazendaDropdown from "components/Dropdowns/FazendaDropdown.js";
 
 export default function Navbar(props) {
   const [navbarOpen, setNavbarOpen] = React.useState(false);
@@ -47,18 +47,14 @@ export default function Navbar(props) {
             </ul> */}
             <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
               <li className="flex items-center">
-                <IndexDropdown />
+                <FazendaDropdown />
               </li>
               <li className="flex items-center">
                 <Link href="formulario/fazenda">
-
-                <a
-                  className="hover:text-gray-600 text-gray-800 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
-                  
-                  >
-                  Cadastra Fazenda
-                </a>
-                  </Link>
+                  <a className="hover:text-gray-600 text-gray-800 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold">
+                    Cadastra Fazenda
+                  </a>
+                </Link>
               </li>
               {/* <li className="flex items-center">
                 <a
@@ -92,8 +88,6 @@ export default function Navbar(props) {
                   <span className="lg:hidden inline-block ml-2">Star</span>
                 </a>
               </li> */}
-
-             
             </ul>
           </div>
         </div>

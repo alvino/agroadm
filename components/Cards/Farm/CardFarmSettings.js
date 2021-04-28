@@ -1,8 +1,6 @@
 import React from "react";
 
-import fb from "../../../server/firebase";
-
-import firebase from 'firebase'
+import axios from "../../../server/axios";
 
 // components
 import MapExample from "components/Maps/MapExample.js";
@@ -25,13 +23,14 @@ export default function CardSettings() {
       cidade: cidade.current.value,
       estado: estado.current.value,
       codigoPostal: codPostal.current.value,
-      marker: new firebase.firestore.GeoPoint(markers[0].lat, markers[0].lng),
+      marker: {
+        latitude: markers[0].lat,
+        longitude: markers[0].lng,
+      },
     };
 
-    const db = fb.firestore()
-
-    db.collection("fazenda").doc().set(data);
-  
+    const resp = await axios.post("fazenda", data);
+    console.log(resp);
   };
 
   return (
