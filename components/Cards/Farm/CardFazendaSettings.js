@@ -29,8 +29,14 @@ export default function CardSettings() {
       },
     };
 
-    const resp = await axios.post("fazenda", data);
-    console.log(resp);
+    axios
+      .post("fazenda", data)
+      .then((resp) =>
+        console.info("OK CardFarmSettings post fazenda " + resp.status)
+      )
+      .catch((resp) =>
+        console.error("ERROR CardFarmSetting post fazenda " + resp.status)
+      );
   };
 
   return (
