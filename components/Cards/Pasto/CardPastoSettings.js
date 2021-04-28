@@ -1,13 +1,11 @@
 import React from "react";
 import { useRouter } from "next/router";
 
-import fb from "../../../server/firebase";
-
-import firebase from "firebase";
-
 import isEmpty from "../../../util/isEmpty";
 // components
 import MapExample from "../../Maps/MapExample.js";
+
+import axios from "../../../server/axios";
 
 export default function CardSettings() {
   const router = useRouter();
@@ -56,18 +54,20 @@ export default function CardSettings() {
     const data = {
       descricao: pasto.current.value,
       area: area.current.value,
-      marker: new firebase.firestore.GeoPoint(markers[0].lat, markers[0].lng),
+      marker: { latitude: markers[0].lat, longitude: markers[0].lng },
     };
 
-    const db = fb.firestore();
-    const fazendaRef = db.collection("fazenda").doc(storageFazenda.id);
-    const pastoRef = id
-      ? fazendaRef.collection("pasto").doc(id)
-      : fazendaRef.collection("pasto").doc();
-
-    pastoRef.set(data).then(() => {
+    function sucesso() {
       router.push("dashboard");
-    });
+    }
+
+    if (id) {
+      axios
+        .put(`pasto?fazenda=${storageFazenda.id}&pasto=${id}`, data)
+        .then(sucesso());
+    } else {
+      axios.post(`pasto?fazenda=${storageFazenda.id}`, data).then(sucesso());
+    }
   };
 
   return (

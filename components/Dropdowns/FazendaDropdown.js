@@ -4,9 +4,7 @@ import useSWR from "swr";
 
 import { createPopper } from "@popperjs/core";
 
-import axios from "../../server/axios";
-
-const fetcher = (url) => axios.get(url).then((res) => res.data);
+import { fetcher } from "../../server/axios";
 
 const LinkDropdown = (props) => {
   const handleOnClick = () => {

@@ -1,34 +1,15 @@
 import React from "react";
 import Link from "next/link";
+import useSWR from "swr";
 
-import fb from "../../../server/firebase";
+import { fetcher } from "../../../server/axios";
+
 // components
 
 export default function CardTablePastos() {
   const storageFazenda = JSON.parse(sessionStorage.getItem("fazenda"));
 
-  const [pastos, setPastos] = React.useState([]);
-
-  React.useEffect(() => {
-    const init = async () => {
-      const db = fb.firestore();
-      const fazendaRef = db.collection("fazenda").doc(storageFazenda.id);
-      const pastoOrderRef = fazendaRef.collection("pasto").orderBy("descricao");
-
-      const snapshot = await pastoOrderRef.get();
-
-      const data = snapshot.docs.map((item) => ({
-        id: item.id,
-        path: item.ref.path,
-        ...item.data(),
-      }));
-
-      setPastos(data);
-      console.log(data[0].marker._lat);
-    };
-
-    init();
-  }, []);
+  const { data } = useSWR(`pasto?fazenda=${storageFazenda.id}`, fetcher);
 
   return (
     <>
@@ -62,29 +43,30 @@ export default function CardTablePastos() {
               </tr>
             </thead>
             <tbody>
-              {pastos.map((item, index) => {
-                return (
-                  <>
-                    <tr
-                      key={`cardtablepastos${index}`}
-                      className="hover:bg-gray-100"
-                    >
-                      <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-no-wrap p-4 text-left">
-                        <Link
-                          href={`pasto?id=${item.id}&descricao=${item.descricao}&area=${item.area}&latitude=${item.marker._lat}&longitude=${item.marker._long}`}
+              {!data
+                ? ""
+                : data.map((item, index) => {
+                    return (
+                      <>
+                        <tr
+                          key={`cardtablepastos${index}`}
+                          className="hover:bg-gray-100"
                         >
-                          <a className="text-sm font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800">
-                            {item.descricao}
-                          </a>
-                        </Link>
-                      </th>
-                      <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-no-wrap p-4">
-                        {item.area}
-                      </td>
-                    </tr>
-                  </>
-                );
-              })}
+                          <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-no-wrap p-4 text-left">
+                            <Link
+                              className="text-sm font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800"
+                              href={`pasto?id=${item.id}&descricao=${item.descricao}&area=${item.area}&latitude=${item.marker.latitude}&longitude=${item.marker.longitude}`}
+                            >
+                              <a>{item.descricao}</a>
+                            </Link>
+                          </th>
+                          <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-no-wrap p-4">
+                            {item.area}
+                          </td>
+                        </tr>
+                      </>
+                    );
+                  })}
             </tbody>
           </table>
         </div>

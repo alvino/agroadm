@@ -27,16 +27,16 @@ const post = async (req, res, db) => {
   res.status(200).json(resposta);
 };
 
-export default async function useHandler(req, res) {
+export default function useHandler(req, res) {
   const db = fb.firestore();
   const { method } = req;
 
   switch (method) {
     case "GET":
-      await get(req, res, db);
+      get(req, res, db);
       break;
     case "POST":
-      await post(req, res, db);
+      post(req, res, db);
       break;
     default:
       res.setHeader("Allow", ["GET", "POST"]);

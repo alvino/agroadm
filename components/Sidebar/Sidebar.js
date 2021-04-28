@@ -148,7 +148,7 @@ export default function Sidebar() {
               </div>
             </form>
 
-            <Navigator>
+            <Navigator key="navigator1">
               <LinkSidebarInterno href="/admin/dashboard" classIcon="fas fa-tv">
                 dashboard
               </LinkSidebarInterno>
@@ -186,7 +186,7 @@ export default function Sidebar() {
               </LinkSidebarInterno>
             </Navigator>
 
-            <Navigator titulo="Documentation">
+            <Navigator key="navigatordocumention" titulo="Documentation">
               <LinkSidebarExterno
                 href="https://www.creative-tim.com/learning-lab/tailwind/nextjs/colors/notus"
                 classIcon="fas fa-paint-brush"
