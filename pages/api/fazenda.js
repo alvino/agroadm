@@ -1,9 +1,7 @@
 import fb from "../../server/firebase";
 import firebase from "firebase";
 
-const db = fb.firestore();
-
-const get = async (req, res) => {
+const get = async (req, res, db) => {
   const snapshot = await db.collection("fazenda").get();
 
   const data = await snapshot.docs.map((item) => ({
@@ -15,7 +13,7 @@ const get = async (req, res) => {
   res.status(200).json(data);
 };
 
-const post = async (req, res) => {
+const post = async (req, res, db) => {
   const { body } = req;
   const data = {
     ...body,
@@ -30,14 +28,15 @@ const post = async (req, res) => {
 };
 
 export default async function useHandler(req, res) {
+  const db = fb.firestore();
   const { method } = req;
 
   switch (method) {
     case "GET":
-      await get(req, res);
+      await get(req, res, db);
       break;
     case "POST":
-      await post(req, res);
+      await post(req, res, db);
       break;
     default:
       res.setHeader("Allow", ["GET", "POST"]);
