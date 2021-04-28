@@ -68,13 +68,15 @@ const FazendaDropdown = () => {
           "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48"
         }
       >
-        {data.map((item, index) => {
-          return (
-            <LinkDropdown key={index} href={`/admin/dashboard`} data={item}>
-              {item.descricao}
-            </LinkDropdown>
-          );
-        })}
+        {!data
+          ? ""
+          : data.map((item, index) => {
+              return (
+                <LinkDropdown key={index} href={`/admin/dashboard`} data={item}>
+                  {item.descricao}
+                </LinkDropdown>
+              );
+            })}
       </div>
     </>
   );
