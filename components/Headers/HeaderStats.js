@@ -1,8 +1,6 @@
 import React from "react";
 
-import fb from "../../server/firebase";
 // components
-
 import CardStats from "components/Cards/CardStats.js";
 import CardStatsTotalArea from "components/Cards/Pasto/CardStatsTotalArea";
 import CardStatsTotalPasto from "components/Cards/Pasto/CardStatsTotalPasto";

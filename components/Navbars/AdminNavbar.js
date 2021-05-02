@@ -1,15 +1,15 @@
 import React from "react";
+import { useRouter } from "next/router";
+import useSWR from "swr";
 
-import UserDropdown from "components/Dropdowns/UserDropdown.js";
+// import UserDropdown from "components/Dropdowns/UserDropdown.js";
+import { fetcher } from "../../server/axios";
 
 export default function Navbar() {
+  const router = useRouter();
+  const { fazenda } = router.query;
 
-  const [titulo, setTitulo] = React.useState()
-  
-  React.useEffect( ()=>{
-    const data = JSON.parse(sessionStorage.getItem('fazenda'))
-    setTitulo( !data ? "Dashboard" : data.descricao )
-  }, [])
+  const { data } = useSWR(`fazenda?fazenda=${fazenda}`, fetcher);
 
   return (
     <>
@@ -19,10 +19,9 @@ export default function Navbar() {
           {/* Brand */}
           <a
             className="text-white text uppercase hidden lg:inline-block font-semibold"
-            href="#pablo"
             onClick={(e) => e.preventDefault()}
           >
-            {titulo}
+            {!data ? "Dashboard" : data.descricao}
           </a>
           {/* Form 
           <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">

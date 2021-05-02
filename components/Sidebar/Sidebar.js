@@ -76,6 +76,7 @@ function Navigator(props) {
 export default function Sidebar() {
   const [collapseShow, setCollapseShow] = React.useState("hidden");
   const router = useRouter();
+  const { fazenda } = router.query;
   return (
     <>
       <nav className="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row md:flex-no-wrap md:overflow-hidden shadow-xl bg-white flex flex-wrap items-center justify-between relative md:w-64 z-10 py-4 px-6">
@@ -149,19 +150,22 @@ export default function Sidebar() {
             </form>
 
             <Navigator key="navigator1">
-              <LinkSidebarInterno href="/admin/dashboard" classIcon="fas fa-tv">
+              <LinkSidebarInterno
+                href={`/admin/${fazenda}/dashboard`}
+                classIcon="fas fa-tv"
+              >
                 dashboard
               </LinkSidebarInterno>
 
               <LinkSidebarInterno
-                href="/admin/pasto"
+                href={`/admin/${fazenda}/pasto`}
                 classIcon="fas fa-vector-square"
               >
                 pasto
               </LinkSidebarInterno>
 
               <LinkSidebarInterno
-                href="/admin/rebanho"
+                href={`/admin/${fazenda}/rebanho`}
                 classIcon="fas fa-vector-square"
               >
                 rebanho

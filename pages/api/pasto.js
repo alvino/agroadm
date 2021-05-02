@@ -1,7 +1,6 @@
-import fb from "../../server/firebase";
-import firebase from "firebase";
+import fb, { GeoPoint } from "server/firebase";
 
-const get = async (req, res, db) => {
+const getAll = async (req, res, db) => {
   const { query } = req;
 
   const fazendaRef = db.collection("fazenda").doc(query.fazenda);
@@ -22,10 +21,7 @@ const post = async (req, res, db) => {
   const { body, query } = req;
   const data = {
     ...body,
-    marker: new firebase.firestore.GeoPoint(
-      body.marker.latitude,
-      body.marker.longitude
-    ),
+    marker: new GeoPoint(body.marker.latitude, body.marker.longitude),
   };
 
   const fazendaRef = db.collection("fazenda").doc(query.fazenda);
@@ -37,10 +33,7 @@ const put = async (req, res, db) => {
   const { body, query } = req;
   const data = {
     ...body,
-    marker: new firebase.firestore.GeoPoint(
-      body.marker.latitude,
-      body.marker.longitude
-    ),
+    marker: new GeoPoint(body.marker.latitude, body.marker.longitude),
   };
 
   const fazendaRef = db.collection("fazenda").doc(query.fazenda);
@@ -54,7 +47,7 @@ export default async function useHandler(req, res) {
 
   switch (method) {
     case "GET":
-      await get(req, res, db);
+      await getAll(req, res, db);
       break;
     case "POST":
       await post(req, res, db);

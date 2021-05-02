@@ -1,12 +1,14 @@
 import React from "react";
 import useSWR from "swr";
+import { useRouter } from "next/router";
 
 import { fetcher } from "../../../server/axios";
 
 export default function CardStatsTotalArea() {
-  const storageFazenda = JSON.parse(sessionStorage.getItem("fazenda"));
+  const router = useRouter();
+  const { fazenda } = router.query;
 
-  const { data } = useSWR(`pasto?fazenda=${storageFazenda.id}`, fetcher);
+  const { data } = useSWR(`pasto?fazenda=${fazenda}`, fetcher);
 
   return (
     <>

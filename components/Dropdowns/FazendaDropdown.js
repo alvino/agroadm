@@ -7,20 +7,10 @@ import { createPopper } from "@popperjs/core";
 import { fetcher } from "../../server/axios";
 
 const LinkDropdown = (props) => {
-  const handleOnClick = () => {
-    sessionStorage.setItem("fazenda", JSON.stringify(props.data));
-  };
-
   return (
     <>
       <Link href={props.href}>
-        <a
-          href="#pablo"
-          className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800"
-          }
-          onClick={handleOnClick}
-        >
+        <a className="text-sm py-2 px-4 font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800">
           {props.children}
         </a>
       </Link>
@@ -70,7 +60,11 @@ const FazendaDropdown = () => {
           ? ""
           : data.map((item, index) => {
               return (
-                <LinkDropdown key={index} href={`/admin/dashboard`} data={item}>
+                <LinkDropdown
+                  key={index}
+                  href={`/admin/${item.id}/dashboard`}
+                  data={item}
+                >
                   {item.descricao}
                 </LinkDropdown>
               );

@@ -5,10 +5,12 @@ import isEmpty from "../../../util/isEmpty";
 // components
 import MapExample from "../../Maps/MapExample.js";
 
-import axios from "../../../server/axios";
+import axios, { fetcher } from "../../../server/axios";
+import useSWR from "swr";
 
-export default function CardSettings() {
+export default function CardPastoSettings() {
   const router = useRouter();
+  const { fazenda } = router.query;
 
   const pasto = React.useRef();
   const area = React.useRef();
@@ -18,16 +20,16 @@ export default function CardSettings() {
 
   const [id, setId] = React.useState(null);
 
-  const storageFazenda = JSON.parse(sessionStorage.getItem("fazenda"));
+  const { data } = useSWR(`fazenda?fazenda=${fazenda}`, fetcher);
 
   React.useEffect(() => {
-    if (storageFazenda) {
+    if (data) {
       setPosicao({
-        lat: storageFazenda.marker.latitude,
-        lng: storageFazenda.marker.longitude,
+        lat: data.latitude,
+        lng: data.longitude,
       });
     }
-  }, []);
+  }, [data]);
 
   React.useEffect(() => {
     const query = router.query;
@@ -58,15 +60,13 @@ export default function CardSettings() {
     };
 
     function sucesso() {
-      router.push("dashboard");
+      router.push(`/admin/${fazenda}/dashboard`);
     }
 
     if (id) {
-      axios
-        .put(`pasto?fazenda=${storageFazenda.id}&pasto=${id}`, data)
-        .then(sucesso());
+      axios.put(`pasto?fazenda=${fazenda}&pasto=${id}`, data).then(sucesso());
     } else {
-      axios.post(`pasto?fazenda=${storageFazenda.id}`, data).then(sucesso());
+      axios.post(`pasto?fazenda=${fazenda}`, data).then(sucesso());
     }
   };
 

@@ -1,7 +1,6 @@
-import fb from "../../server/firebase";
-import firebase from "firebase";
+import fb, { GeoPoint } from "server/firebase";
 
-const get = async (req, res, db) => {
+const getAll = async (req, res, db) => {
   const snapshot = await db.collection("fazenda").get();
 
   const data = await snapshot.docs.map((item) => ({
@@ -13,14 +12,21 @@ const get = async (req, res, db) => {
   res.status(200).json(data);
 };
 
+const getFilterFazenda = async (req, res, db) => {
+  const { query } = req;
+
+  const ref = db.doc(`fazenda/${query.fazenda}`);
+  ref.onSnapshot((doc) => {
+    const data = doc.data();
+    res.status(200).json(data);
+  });
+};
+
 const post = async (req, res, db) => {
   const { body } = req;
   const data = {
     ...body,
-    marker: new firebase.firestore.GeoPoint(
-      body.marker.latitude,
-      body.marker.longitude
-    ),
+    marker: new GeoPoint(body.marker.latitude, body.marker.longitude),
   };
 
   const resposta = await db.collection("fazenda").doc().set(data);
@@ -29,11 +35,15 @@ const post = async (req, res, db) => {
 
 export default function useHandler(req, res) {
   const db = fb.firestore();
-  const { method } = req;
+  const { method, query } = req;
 
   switch (method) {
     case "GET":
-      get(req, res, db);
+      if (query.fazenda) {
+        getFilterFazenda(req, res, db);
+      } else {
+        getAll(req, res, db);
+      }
       break;
     case "POST":
       post(req, res, db);

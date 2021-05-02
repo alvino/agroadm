@@ -1,4 +1,4 @@
-import firebase from "firebase/app";
+import firebase from "firebase";
 import "firebase/firestore";
 
 const firebaseConfig = {
@@ -9,6 +9,9 @@ const firebaseConfig = {
   messagingSenderId: "446375370955",
   appId: "1:446375370955:web:9bcb8bc7506347aab5bb4e",
 };
+
+//export func
+export const GeoPoint = firebase.firestore.GeoPoint;
 
 // Initialize Firebase
 export default !firebase.apps.length
