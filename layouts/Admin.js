@@ -11,7 +11,6 @@ import FooterAdmin from "components/Footers/FooterAdmin.js";
 
 export default function Admin({ children }) {
   const router = useRouter();
-  const { fazenda } = router.query;
 
   return (
     <>
