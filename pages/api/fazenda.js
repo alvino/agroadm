@@ -1,4 +1,4 @@
-import fb, { GeoPoint } from "server/firebase";
+import fb, { GeoPoint, Timestamp } from "server/firebase";
 
 const getAll = async (req, res, db) => {
   const snapshot = await db.collection("fazenda").get();
@@ -26,6 +26,7 @@ const post = async (req, res, db) => {
   const { body } = req;
   const data = {
     ...body,
+    createAt: new Timestamp.now(),
     marker: new GeoPoint(body.marker.latitude, body.marker.longitude),
   };
 

@@ -12,6 +12,7 @@ const firebaseConfig = {
 
 //export func
 export const GeoPoint = firebase.firestore.GeoPoint;
+export const Timestamp = firebase.firestore.Timestamp;
 
 // Initialize Firebase
 export default !firebase.apps.length

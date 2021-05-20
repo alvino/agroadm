@@ -1,12 +1,13 @@
-import fb, { GeoPoint, Timestamp } from "server/firebase";
+import fb, { Timestamp } from "server/firebase";
 
 const getAll = async (req, res, db) => {
   const { query } = req;
+  const { fazenda: fazendaQuery } = query;
 
-  const fazendaRef = db.collection("fazenda").doc(query.fazenda);
-  const pastoOrderRef = fazendaRef.collection("pasto").orderBy("descricao");
+  const fazendaRef = db.collection("fazenda").doc(fazendaQuery);
+  const rebanhoRef = fazendaRef.collection("rebanho");
 
-  const snapshot = await pastoOrderRef.get();
+  const snapshot = await rebanhoRef.get();
 
   const data = snapshot.docs.map((item) => ({
     id: item.id,
@@ -19,27 +20,30 @@ const getAll = async (req, res, db) => {
 
 const post = async (req, res, db) => {
   const { body, query } = req;
+  const { fazenda: fazendaQuery } = query;
+
   const data = {
     ...body,
     createAt: new Timestamp.fromDate(new Date()),
-    marker: new GeoPoint(body.marker.latitude, body.marker.longitude),
+    pasto: db.doc(body.pasto),
   };
 
-  const fazendaRef = db.collection("fazenda").doc(query.fazenda);
-  await fazendaRef.collection("pasto").doc().set(data);
+  const fazendaRef = db.collection("fazenda").doc(fazendaQuery);
+  await fazendaRef.collection("rebanho").doc().set(data);
   res.status(200);
 };
 
 const put = async (req, res, db) => {
   const { body, query } = req;
+  const { fazenda: fazendaQuery, rebanho: rebanhoQuery } = query;
   const data = {
     ...body,
     updateAt: new Timestamp.fromDate(new Date()),
-    marker: new GeoPoint(body.marker.latitude, body.marker.longitude),
+    pasto: db.doc(body.pasto),
   };
 
-  const fazendaRef = db.collection("fazenda").doc(query.fazenda);
-  await fazendaRef.collection("pasto").doc(query.pasto).set(data);
+  const fazendaRef = db.collection("fazenda").doc(fazendaQuery);
+  await fazendaRef.collection("rebanho").doc(rebanhoQuery).set(data);
   res.status(200);
 };
 
