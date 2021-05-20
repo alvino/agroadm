@@ -21,7 +21,7 @@ export default function CardStatsTotalArea() {
               </h5>
               <span className="font-semibold text-xl text-gray-800">
                 {!data
-                  ? ""
+                  ? null
                   : data
                       .reduce((acc, item) => (acc += parseFloat(item.area)), 0)
                       .toFixed(2)}

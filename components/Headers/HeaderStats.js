@@ -4,6 +4,8 @@ import React from "react";
 import CardStats from "components/Cards/CardStats.js";
 import CardStatsTotalArea from "components/Cards/Pasto/CardStatsTotalArea";
 import CardStatsTotalPasto from "components/Cards/Pasto/CardStatsTotalPasto";
+import CardStatsFemeas from "components/Cards/Rebanho/CardStatsFemeas";
+import CardStatsMachos from "components/Cards/Rebanho/CardStatsMachos";
 
 export default function HeaderStats() {
   return (
@@ -19,6 +21,14 @@ export default function HeaderStats() {
               </div>
               <div className="w-full lg:w-6/12 xl:w-3/12 px-4">
                 <CardStatsTotalArea />
+              </div>
+            </div>
+            <div className="flex flex-wrap py-4">
+              <div className="w-full lg:w-6/12 xl:w-3/12 px-4">
+                <CardStatsFemeas />
+              </div>
+              <div className="w-full lg:w-6/12 xl:w-3/12 px-4">
+                <CardStatsMachos />
               </div>
               {/* <div className="w-full lg:w-6/12 xl:w-3/12 px-4">
                 <CardStats

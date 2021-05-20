@@ -38,7 +38,7 @@ export default function CardTablePastos() {
             </thead>
             <tbody>
               {!data
-                ? ""
+                ? null
                 : data.map((item, index) => {
                     return (
                       <>

@@ -1,6 +1,6 @@
 import React from "react";
 
-import axios from "../../../server/axios";
+import axios from "server/axios";
 
 // components
 import MapExample from "components/Maps/MapExample.js";

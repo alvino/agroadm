@@ -1,48 +1,52 @@
 import React from "react";
 import { useRouter } from "next/router";
 
-import fb from "../../../server/firebase";
-
-import firebase from "firebase";
-
-import isEmpty from "../../../util/isEmpty";
+import axios, { fetcher } from "../../../server/axios";
+import useSWR from "swr";
 
 export default function CardSettings() {
   const router = useRouter();
+  const { fazenda: fazendaQuery } = router.query;
 
-  const pasto = React.useRef();
-  const area = React.useRef();
+  const pastoRef = React.useRef();
+  const femeasMamandoRef = React.useRef();
+  const machosMamandoRef = React.useRef();
+  const femeasProducaoRef = React.useRef();
+  const machosProducaoRef = React.useRef();
+  const femeasDesmRef = React.useRef();
+  const machosDesmRef = React.useRef();
+  const femeas12Ref = React.useRef();
+  const machos12Ref = React.useRef();
+  const femeas24Ref = React.useRef();
+  const machos24Ref = React.useRef();
+  const femeas36Ref = React.useRef();
+  const machos36Ref = React.useRef();
 
-  const [id, setId] = React.useState(null);
-
-  const storageFazenda = JSON.parse(sessionStorage.getItem("fazenda"));
-
-  React.useEffect(() => {
-    const query = router.query;
-
-    if (!isEmpty(query)) {
-      pasto.current.value = query.descricao;
-      area.current.value = query.area;
-
-      // setId(query.id);
-    }
-  }, []);
+  // const { data: fazenda } = useSWR(`fazenda?fazenda=${fazendaQuery}`, fetcher);
+  const { data: pastos } = useSWR(`pasto?fazenda=${fazendaQuery}`, fetcher);
 
   const handleSalvar = async (event) => {
     const data = {
-      descricao: pasto.current.value,
-      area: area.current.value,
+      pasto: pastoRef.current.value,
+      femeasMamando: femeasMamandoRef.current.value,
+      machosMamando: machosMamandoRef.current.value,
+      femeasProducao: femeasProducaoRef.current.value,
+      machosProducao: machosProducaoRef.current.value,
+      femeasDesm: femeasDesmRef.current.value,
+      machosDesm: machosDesmRef.current.value,
+      femeas12: femeas12Ref.current.value,
+      machos12: machos12Ref.current.value,
+      femeas24: femeas24Ref.current.value,
+      machos24: machos24Ref.current.value,
+      femeas36: femeas36Ref.current.value,
+      machos36: machos36Ref.current.value,
     };
 
-    const db = fb.firestore();
-    const fazendaRef = db.collection("fazenda").doc(storageFazenda.id);
-    // const pastoRef = id
-    //   ? fazendaRef.collection("pasto").doc(id)
-    //   : fazendaRef.collection("pasto").doc();
-
-    // pastoRef.set(data).then(() => {
-    //   router.push("dashboard");
-    // });
+    await axios.post(`rebanho?fazenda=${fazendaQuery}`, data).then((res) => {
+      alert(JSON.stringify(res));
+      if (res.status === 200) router.push(`/admin/${fazendaQuery}/dashboard`);
+      else alert("Algo deu errado.");
+    });
   };
 
   return (
@@ -64,28 +68,6 @@ export default function CardSettings() {
         </div>
         <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
           <form>
-            {/* <h6 className="text-gray-500 text-sm mt-3 mb-6 font-bold uppercase">
-              Marque uma localização
-            </h6>
-            <div className="flex flex-wrap">
-              <MapExample
-                onMarkerClick={handleMarkerClick}
-                markers={markers}
-                defaultCenter={posicao}
-                zoom={16}
-              />
-              <label
-                className="block uppercase text-gray-700 text-xs font-bold mb-2"
-                htmlFor="grid-password"
-              >
-                {markers.map(
-                  (marker) => `Lat: ${marker.lat} ,Long: ${marker.lng}`
-                )}
-              </label>
-            </div>
-
-            <hr className="mt-6 border-b-1 border-gray-400" /> */}
-
             <h6 className="text-gray-500 text-sm mt-3 mb-6 font-bold uppercase">
               Informações
             </h6>
@@ -98,12 +80,29 @@ export default function CardSettings() {
                   >
                     Descrição do pasto
                   </label>
-                  <input
+                  {/* <input
                     type="text"
                     ref={pasto}
                     className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
                     defaultValue="Pasto ...."
-                  />
+                  /> */}
+
+                  <select
+                    ref={pastoRef}
+                    className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
+                  >
+                    {!pastos ? (
+                      <option value="0">
+                        Não foi possivel carregar a lista
+                      </option>
+                    ) : (
+                      pastos.map((item, index) => (
+                        <option key={index} value={item.path}>
+                          {item.descricao}
+                        </option>
+                      ))
+                    )}
+                  </select>
                 </div>
               </div>
             </div>
@@ -120,7 +119,7 @@ export default function CardSettings() {
                   <input
                     type="number"
                     step="0"
-                    ref={area}
+                    ref={femeasMamandoRef}
                     className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
                     defaultValue="0"
                   />
@@ -138,7 +137,7 @@ export default function CardSettings() {
                   <input
                     type="number"
                     step="0"
-                    ref={area}
+                    ref={machosMamandoRef}
                     className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
                     defaultValue="0"
                   />
@@ -157,7 +156,7 @@ export default function CardSettings() {
                   <input
                     type="number"
                     step="0"
-                    ref={area}
+                    ref={femeasProducaoRef}
                     className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
                     defaultValue="0"
                   />
@@ -175,7 +174,7 @@ export default function CardSettings() {
                   <input
                     type="number"
                     step="0"
-                    ref={area}
+                    ref={machosProducaoRef}
                     className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
                     defaultValue="0"
                   />
@@ -195,7 +194,7 @@ export default function CardSettings() {
                   <input
                     type="number"
                     step="0"
-                    ref={area}
+                    ref={femeasDesmRef}
                     className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
                     defaultValue="0"
                   />
@@ -213,7 +212,7 @@ export default function CardSettings() {
                   <input
                     type="number"
                     step="0"
-                    ref={area}
+                    ref={machosDesmRef}
                     className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
                     defaultValue="0"
                   />
@@ -227,12 +226,12 @@ export default function CardSettings() {
                     className="block uppercase text-gray-700 text-xs font-bold mb-2"
                     htmlFor="grid-password"
                   >
-                    Femeas 12/24 m
+                    Femeas 12/23 m
                   </label>
                   <input
                     type="number"
                     step="0"
-                    ref={area}
+                    ref={femeas12Ref}
                     className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
                     defaultValue="0"
                   />
@@ -245,12 +244,12 @@ export default function CardSettings() {
                     className="block uppercase text-gray-700 text-xs font-bold mb-2"
                     htmlFor="grid-password"
                   >
-                    Machos 12/24 m
+                    Machos 12/23 m
                   </label>
                   <input
                     type="number"
                     step="0"
-                    ref={area}
+                    ref={machos12Ref}
                     className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
                     defaultValue="0"
                   />
@@ -265,13 +264,13 @@ export default function CardSettings() {
                     className="block uppercase text-gray-700 text-xs font-bold mb-2"
                     htmlFor="grid-password"
                   >
-                    Femeas 24/36 m
+                    Femeas 24/35 m
                   </label>
                   <input
                     type="number"
                     step="0"
                     min="0"
-                    ref={area}
+                    ref={femeas24Ref}
                     className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
                     defaultValue="0"
                   />
@@ -284,11 +283,12 @@ export default function CardSettings() {
                     className="block uppercase text-gray-700 text-xs font-bold mb-2"
                     htmlFor="grid-password"
                   >
-                    Machos 24/36 m
+                    Machos 24/35 m
                   </label>
                   <input
                     type="number"
                     step="0"
+                    ref={machos24Ref}
                     className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
                     defaultValue="0"
                   />
@@ -307,7 +307,7 @@ export default function CardSettings() {
                   <input
                     type="number"
                     step="0"
-                    ref={area}
+                    ref={femeas36Ref}
                     className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
                     defaultValue="0"
                   />
@@ -325,7 +325,7 @@ export default function CardSettings() {
                   <input
                     type="number"
                     step="0"
-                    ref={area}
+                    ref={machos36Ref}
                     className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
                     defaultValue="0"
                   />

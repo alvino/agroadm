@@ -24,9 +24,7 @@ export default function CardStats({
                 {statTitle}
               </span>
             </div>
-            {!statIconName ? (
-              ""
-            ) : (
+            {!statIconName ? null : (
               <div className="relative w-auto pl-4 flex-initial">
                 <div
                   className={
@@ -40,9 +38,7 @@ export default function CardStats({
             )}
           </div>
           <p className="text-sm text-gray-500 mt-4">
-            {!statPercent ? (
-              ""
-            ) : (
+            {!statPercent ? null : (
               <span className={statPercentColor + " mr-2"}>
                 <i
                   className={
@@ -50,7 +46,7 @@ export default function CardStats({
                       ? "fas fa-arrow-up"
                       : statArrow === "down"
                       ? "fas fa-arrow-down"
-                      : ""
+                      : null
                   }
                 ></i>{" "}
                 {statPercent}%

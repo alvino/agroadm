@@ -6,25 +6,12 @@ import { createPopper } from "@popperjs/core";
 
 import { fetcher } from "../../server/axios";
 
-const LinkDropdown = (props) => {
-  return (
-    <>
-      <Link href={props.href}>
-        <a className="text-sm py-2 px-4 font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800">
-          {props.children}
-        </a>
-      </Link>
-    </>
-  );
-};
-
 const FazendaDropdown = () => {
+  const { data } = useSWR("fazenda", fetcher);
   // dropdown props
   const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);
   const btnDropdownRef = React.createRef();
   const popoverDropdownRef = React.createRef();
-
-  const { data } = useSWR("fazenda", fetcher);
 
   const openDropdownPopover = () => {
     createPopper(btnDropdownRef.current, popoverDropdownRef.current, {
@@ -40,7 +27,7 @@ const FazendaDropdown = () => {
     <>
       <a
         className="hover:text-gray-600 text-gray-800 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
-        href="#pablo"
+        href="#fazendas"
         ref={btnDropdownRef}
         onClick={(e) => {
           e.preventDefault();
@@ -57,16 +44,17 @@ const FazendaDropdown = () => {
         }
       >
         {!data
-          ? ""
+          ? null
           : data.map((item, index) => {
               return (
-                <LinkDropdown
-                  key={index}
-                  href={`/admin/${item.id}/dashboard`}
-                  data={item}
-                >
-                  {item.descricao}
-                </LinkDropdown>
+                <Link href={`/admin/${item.id}/dashboard`} key={index}>
+                  <a
+                    href={`#${item.descricao}`}
+                    className="text-sm py-2 px-4 font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800"
+                  >
+                    {item.descricao}
+                  </a>
+                </Link>
               );
             })}
       </div>

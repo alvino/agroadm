@@ -1,11 +1,11 @@
 import React from "react";
 import { useRouter } from "next/router";
 
-import isEmpty from "../../../util/isEmpty";
+import isEmpty from "util/isEmpty";
 // components
-import MapExample from "../../Maps/MapExample.js";
+import MapExample from "components/Maps/MapExample.js";
 
-import axios, { fetcher } from "../../../server/axios";
+import axios, { fetcher } from "server/axios";
 import useSWR from "swr";
 
 export default function CardPastoSettings() {
@@ -20,21 +20,22 @@ export default function CardPastoSettings() {
 
   const [id, setId] = React.useState(null);
 
-  const { data } = useSWR(`fazenda?fazenda=${fazenda}`, fetcher);
+  const { data: fazendaQuery } = useSWR(`fazenda?fazenda=${fazenda}`, fetcher);
 
   React.useEffect(() => {
-    if (data) {
+    if (fazendaQuery) {
+      alert(JSON.stringify(fazendaQuery));
       setPosicao({
-        lat: data.latitude,
-        lng: data.longitude,
+        lat: fazendaQuery.marker.latitude,
+        lng: fazendaQuery.marker.longitude,
       });
     }
-  }, [data]);
+  }, [fazendaQuery]);
 
   React.useEffect(() => {
     const query = router.query;
 
-    if (!isEmpty(query)) {
+    if (!query) {
       pasto.current.value = query.descricao;
       area.current.value = query.area;
       setMarkers([
