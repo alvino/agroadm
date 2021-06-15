@@ -9,7 +9,7 @@ import HeaderStats from "components/Headers/HeaderStats.js";
 import HeaderDefault from "components/Headers/HeaderDefault.js";
 import FooterAdmin from "components/Footers/FooterAdmin.js";
 
-export default function Admin({ children }) {
+function Admin({ children }) {
   const router = useRouter();
 
   return (
@@ -32,3 +32,7 @@ export default function Admin({ children }) {
     </>
   );
 }
+
+Admin.auth = true;
+
+export default Admin;
