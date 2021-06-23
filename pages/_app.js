@@ -4,7 +4,7 @@ import App from "next/app";
 import Head from "next/head";
 import Router from "next/router";
 
-import { Provider, useSession, signIn } from "next-auth/client";
+import { Provider } from "next-auth/client";
 
 import PageChange from "components/PageChange/PageChange.js";
 
@@ -28,21 +28,6 @@ Router.events.on("routeChangeError", () => {
   document.body.classList.remove("body-page-transition");
 });
 
-function Auth({ children }) {
-  const [session] = useSession();
-  React.useEffect(() => {
-    if (!session) signIn(); // If not authenticated, force log in
-  }, [session]);
-
-  if (session) {
-    return children;
-  }
-
-  // Session is being fetched, or no user.
-  // If no user, useEffect() will redirect.
-  Router.push("/");
-}
-
 function MyApp({ Component, pageProps }) {
   const Layout = Component.layout || (({ children }) => <>{children}</>);
 
@@ -57,23 +42,17 @@ function MyApp({ Component, pageProps }) {
       </Head>
       <Layout>
         <Provider session={pageProps.session}>
-          {Component.auth ? (
-            <Auth>
-              <Component {...pageProps} />
-            </Auth>
-          ) : (
-            <Component {...pageProps} />
-          )}
+          <Component {...pageProps} />
         </Provider>
       </Layout>
     </React.Fragment>
   );
 }
 
-MyApp.getInitialProps = async (appContext) => {
-  const appProps = await App.getInitialProps(appContext);
+// MyApp.getInitialProps = async (appContext) => {
+//   const appProps = await App.getInitialProps(appContext);
 
-  return { ...appProps };
-};
+//   return { ...appProps };
+// };
 
 export default MyApp;

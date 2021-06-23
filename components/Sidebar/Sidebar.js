@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { signOut } from "next-auth/client";
 
 import NotificationDropdown from "components/Dropdowns/NotificationDropdown.js";
 import UserDropdown from "components/Dropdowns/UserDropdown.js";
@@ -22,6 +23,8 @@ function LinkSidebarExterno(props) {
 
 function LinkSidebarInterno(props) {
   const router = useRouter();
+
+  const ref = props.href.split("/").pop();
   return (
     <>
       <Link href={props.href}>
@@ -29,7 +32,7 @@ function LinkSidebarInterno(props) {
           href="#pablo"
           className={
             "text-xs uppercase py-3 font-bold block " +
-            (router.pathname.indexOf(props.href) !== -1
+            (router.pathname.includes(ref)
               ? "text-blue-500 hover:text-blue-600"
               : "text-gray-800 hover:text-gray-600")
           }
@@ -37,7 +40,7 @@ function LinkSidebarInterno(props) {
           <i
             className={
               `${props.classIcon} mr-2 text-sm ` +
-              (router.pathname.indexOf(props.href) !== -1
+              (router.pathname.indexOf(ref) !== -1
                 ? "opacity-75"
                 : "text-gray-400")
             }
@@ -63,8 +66,10 @@ function Navigator(props) {
       {/* Navigation */}
 
       <ul className="md:flex-col md:min-w-full flex flex-col list-none md:mb-4">
-        {Array(props.children).map((child) => (
-          <li className="items-center">{child}</li>
+        {Array(props.children).map((child, index) => (
+          <li key={index} className="items-center">
+            {child}
+          </li>
         ))}
       </ul>
     </>
@@ -75,6 +80,12 @@ export default function Sidebar() {
   const [collapseShow, setCollapseShow] = React.useState("hidden");
   const router = useRouter();
   const { fazenda } = router.query;
+
+  const handlerSignout = () => {
+    signOut();
+    router.push("/");
+  };
+
   return (
     <>
       <nav className="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row md:flex-no-wrap md:overflow-hidden shadow-xl bg-white flex flex-wrap items-center justify-between relative md:w-64 z-10 py-4 px-6">
@@ -96,6 +107,7 @@ export default function Sidebar() {
               agroadm
             </a>
           </Link>
+
           {/* User */}
           <ul className="md:hidden items-center flex flex-wrap list-none">
             <li className="inline-block relative">
@@ -188,62 +200,14 @@ export default function Sidebar() {
               </LinkSidebarInterno>
             </Navigator>
 
-            <Navigator key="navigatordocumention" titulo="Documentation">
-              <LinkSidebarExterno
-                href="https://www.creative-tim.com/learning-lab/tailwind/nextjs/colors/notus"
-                classIcon="fas fa-paint-brush"
+            <Navigator key="navigatordocumention">
+              <button
+                className="text-xs uppercase py-3 font-bold block text-gray-800 hover:text-gray-600"
+                onClick={handlerSignout}
               >
-                Styles
-              </LinkSidebarExterno>
-
-              <LinkSidebarExterno
-                href="https://www.creative-tim.com/learning-lab/tailwind/nextjs/alerts/notus"
-                classIcon="fab fa-css3-alt"
-              >
-                CSS Components
-              </LinkSidebarExterno>
-
-              <LinkSidebarExterno
-                href="https://www.creative-tim.com/learning-lab/tailwind/angular/overview/notus"
-                classIcon="fab fa-angular"
-              >
-                Angular
-              </LinkSidebarExterno>
-
-              <LinkSidebarExterno
-                href="https://www.creative-tim.com/learning-lab/tailwind/js/overview/notus"
-                classIcon="fab fa-js-square"
-              >
-                Javascript
-              </LinkSidebarExterno>
-
-              <LinkSidebarExterno
-                href="https://www.creative-tim.com/learning-lab/tailwind/nextjs/overview/notus"
-                classIcon="fab fa-react"
-              >
-                NextJS
-              </LinkSidebarExterno>
-
-              <LinkSidebarExterno
-                href="https://www.creative-tim.com/learning-lab/tailwind/react/overview/notus"
-                classIcon="fab fa-react"
-              >
-                React
-              </LinkSidebarExterno>
-
-              <LinkSidebarExterno
-                href="https://www.creative-tim.com/learning-lab/tailwind/svelte/overview/notus"
-                classIcon="fas fa-link"
-              >
-                Svelte
-              </LinkSidebarExterno>
-
-              <LinkSidebarExterno
-                href="https://www.creative-tim.com/learning-lab/tailwind/vue/overview/notus"
-                classIcon="fab fa-vuejs"
-              >
-                VueJS
-              </LinkSidebarExterno>
+                <i className="fas fa-sign-out-alt mr-2 text-sm text-gray-400"></i>
+                sair
+              </button>
             </Navigator>
           </div>
         </div>
