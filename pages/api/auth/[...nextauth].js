@@ -10,17 +10,17 @@ export default NextAuth({
     }),
   ],
 
-  //   callbacks: {
-  //     async signIn(user, account, profile) {
-  //       if (
-  //         account.provider === "google" &&
-  //         profile.verified_email === true &&
-  //         profile.email.endsWith("@example.com")
-  //       ) {
-  //         return true;
-  //       } else {
-  //         return false;
-  //       }
-  //     },
-  //   },
+  callbacks: {
+    /**
+     * @param  {object} session      Session object
+     * @param  {object} token        User object    (if using database sessions)
+     *                               JSON Web Token (if not using database sessions)
+     * @return {object}              Session that will be returned to the client
+     */
+    async session(session, token) {
+      // Add property to session, like an access_token from a provider.
+      session.accessToken = token.accessToken;
+      return session;
+    },
+  },
 });
