@@ -1,7 +1,6 @@
-import { getSession, session } from "next-auth/client";
 import slug from "slug";
 
-import authentication from "middleware/authentication";
+import withSession from "middleware/withSession";
 import connectDB from "middleware/mongoose";
 import Fazenda from "models/fazenda";
 
@@ -47,4 +46,4 @@ const useHandler = async (req, res) => {
   res.end();
 };
 
-export default authentication(connectDB(useHandler));
+export default withSession(connectDB(useHandler));
