@@ -1,56 +1,50 @@
-import fb, { GeoPoint, Timestamp } from "server/firebase";
+import { getSession, session } from "next-auth/client";
+import slug from "slug";
 
-const getAll = async (req, res, db) => {
-  const snapshot = await db.collection("fazenda").get();
+import authentication from "middleware/authentication";
+import connectDB from "middleware/mongoose";
+import Fazenda from "models/fazenda";
 
-  const data = await snapshot.docs.map((item) => ({
-    id: item.id,
-    path: item.ref.path,
-    ...item.data(),
-  }));
-
-  res.status(200).json(data);
+const getAll = async (session) => {
+  return await Fazenda.find({ email: session.user.email });
 };
 
-const getFilterFazenda = async (req, res, db) => {
-  const { query } = req;
-
-  const ref = db.doc(`fazenda/${query.fazenda}`);
-  ref.onSnapshot((doc) => {
-    const data = doc.data();
-    res.status(200).json(data);
+const getFilterFazenda = async (query, session) => {
+  return await Fazenda.findOne({
+    slug: query.fazenda,
+    email: session.user.email,
   });
 };
 
-const post = async (req, res, db) => {
-  const { body } = req;
-  const data = {
+const post = async (body, session) => {
+  const fazenda = new Fazenda({
     ...body,
-    createAt: new Timestamp.now(),
-    marker: new GeoPoint(body.marker.latitude, body.marker.longitude),
-  };
+    slug: slug(body.descricao),
+    email: session.user.email,
+  });
 
-  const resposta = await db.collection("fazenda").doc().set(data);
-  res.status(200).json(resposta);
+  return await fazenda.save();
 };
 
-export default function useHandler(req, res) {
-  const db = fb.firestore();
-  const { method, query } = req;
+const useHandler = async (req, res) => {
+  const { method, query, body, session } = req;
 
   switch (method) {
     case "GET":
       if (query.fazenda) {
-        getFilterFazenda(req, res, db);
+        res.json(await getFilterFazenda(query, session));
       } else {
-        getAll(req, res, db);
+        res.json(await getAll(session));
       }
       break;
     case "POST":
-      post(req, res, db);
+      res.json(await post(body, session));
       break;
     default:
       res.setHeader("Allow", ["GET", "POST"]);
-      res.status(405).end(`Method ${method} Not Allowed`);
+      res.status(405).send(`Method ${method} Not Allowed`);
   }
-}
+  res.end();
+};
+
+export default authentication(connectDB(useHandler));
