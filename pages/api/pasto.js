@@ -1,4 +1,5 @@
 import fb, { GeoPoint, Timestamp } from "server/firebase";
+import slug from "slug";
 
 const getAll = async (req, res, db) => {
   const { query } = req;
@@ -26,7 +27,7 @@ const post = async (req, res, db) => {
   };
 
   const fazendaRef = db.collection("fazenda").doc(query.fazenda);
-  await fazendaRef.collection("pasto").doc().set(data);
+  await fazendaRef.collection("pasto").doc(slug(data.descricao)).set(data);
   res.status(200);
 };
 

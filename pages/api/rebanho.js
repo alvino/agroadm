@@ -1,4 +1,5 @@
 import fb, { Timestamp } from "server/firebase";
+import slug from "slug";
 
 const getAll = async (req, res, db) => {
   const { query } = req;
@@ -18,22 +19,27 @@ const getAll = async (req, res, db) => {
   res.status(200).json(data);
 };
 
-const post = async (req, res, db) => {
+const post = (req, res, db) => {
   const { body, query } = req;
   const { fazenda: fazendaQuery } = query;
 
   const data = {
     ...body,
     createAt: new Timestamp.fromDate(new Date()),
-    pasto: db.doc(body.pasto),
   };
 
+  delete data.pasto;
+
   const fazendaRef = db.collection("fazenda").doc(fazendaQuery);
-  await fazendaRef.collection("rebanho").doc().set(data);
-  res.status(200);
+  fazendaRef
+    .collection("rebanho")
+    .doc(slug(body.pasto))
+    .set(data)
+    .then(() => res.status(200))
+    .catch(() => res.status(500));
 };
 
-const put = async (req, res, db) => {
+const put = (req, res, db) => {
   const { body, query } = req;
   const { fazenda: fazendaQuery, rebanho: rebanhoQuery } = query;
   const data = {
@@ -43,7 +49,12 @@ const put = async (req, res, db) => {
   };
 
   const fazendaRef = db.collection("fazenda").doc(fazendaQuery);
-  await fazendaRef.collection("rebanho").doc(rebanhoQuery).set(data);
+  fazendaRef
+    .collection("rebanho")
+    .doc(rebanhoQuery)
+    .set(data)
+    .then(() => res.status(200))
+    .catch(() => res.status(500));
   res.status(200);
 };
 
