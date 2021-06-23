@@ -27,7 +27,7 @@ export default function CardSettings() {
 
   const handleSalvar = async (event) => {
     const data = {
-      pasto: pastoRef.current.value,
+      pasto: pastoRef.current.value.split("/")[3],
       femeasMamando: femeasMamandoRef.current.value,
       machosMamando: machosMamandoRef.current.value,
       femeasProducao: femeasProducaoRef.current.value,
@@ -42,11 +42,14 @@ export default function CardSettings() {
       machos36: machos36Ref.current.value,
     };
 
-    await axios.post(`rebanho?fazenda=${fazendaQuery}`, data).then((res) => {
-      alert(JSON.stringify(res));
-      if (res.status === 200) router.push(`/admin/${fazendaQuery}/dashboard`);
-      else alert("Algo deu errado.");
-    });
+    try {
+      await axios.post(`rebanho?fazenda=${fazendaQuery}`, data).then((res) => {
+        if (res.status === 200) router.push(`/admin/${fazendaQuery}/dashboard`);
+        else alert("500");
+      });
+    } catch (e) {
+      alert("Algo deu errado.");
+    }
   };
 
   return (
