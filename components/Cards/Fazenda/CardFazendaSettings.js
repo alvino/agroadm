@@ -1,4 +1,5 @@
 import React from "react";
+import { useRouter } from "next/router";
 
 import axios from "server/axios";
 
@@ -6,6 +7,8 @@ import axios from "server/axios";
 import MapExample from "components/Maps/MapExample.js";
 
 export default function CardSettings() {
+  const router = useRouter();
+
   const propriedade = React.useRef();
   const cidade = React.useRef();
   const estado = React.useRef();
@@ -29,14 +32,7 @@ export default function CardSettings() {
       },
     };
 
-    axios
-      .post("fazenda", data)
-      .then((resp) =>
-        console.info("OK CardFarmSettings post fazenda " + resp.status)
-      )
-      .catch((resp) =>
-        console.error("ERROR CardFarmSetting post fazenda " + resp.status)
-      );
+    axios.post("fazenda", data).then((resp) => router.push("/"));
   };
 
   return (
