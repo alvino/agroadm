@@ -45,13 +45,7 @@ export default function CardTablePastos() {
                         <tr key={index} className="hover:bg-gray-100">
                           <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-no-wrap p-4 text-left">
                             <Link
-                              href={`/admin/${
-                                item.path.split("/", 2)[1]
-                              }/pasto?id=${item.id}&descricao=${
-                                item.descricao
-                              }&area=${item.area}&latitude=${
-                                item.marker.latitude
-                              }&longitude=${item.marker.longitude}`}
+                              href={`/admin/${item.fazenda}/pasto?id=${item._id}`}
                             >
                               <a className="text-sm font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800">
                                 {item.descricao}

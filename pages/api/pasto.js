@@ -1,65 +1,44 @@
-import fb, { GeoPoint, Timestamp } from "server/firebase";
 import slug from "slug";
 
-const getAll = async (req, res, db) => {
-  const { query } = req;
+import withSession from "middleware/withSession";
+import connectDB from "middleware/mongoose";
+import Pasto from "models/pasto";
 
-  const fazendaRef = db.collection("fazenda").doc(query.fazenda);
-  const pastoOrderRef = fazendaRef.collection("pasto").orderBy("descricao");
-
-  const snapshot = await pastoOrderRef.get();
-
-  const data = snapshot.docs.map((item) => ({
-    id: item.id,
-    path: item.ref.path,
-    ...item.data(),
-  }));
-
-  res.status(200).json(data);
-};
-
-const post = async (req, res, db) => {
-  const { body, query } = req;
-  const data = {
+const save = async (body, query) => {
+  const pasto = new Pasto({
     ...body,
-    createAt: new Timestamp.fromDate(new Date()),
-    marker: new GeoPoint(body.marker.latitude, body.marker.longitude),
-  };
-
-  const fazendaRef = db.collection("fazenda").doc(query.fazenda);
-  await fazendaRef.collection("pasto").doc(slug(data.descricao)).set(data);
-  res.status(200);
+    fazenda: query.fazenda,
+    slug: slug(body.descricao),
+  });
+  return await Pasto.create(pasto);
 };
 
-const put = async (req, res, db) => {
-  const { body, query } = req;
-  const data = {
-    ...body,
-    updateAt: new Timestamp.fromDate(new Date()),
-    marker: new GeoPoint(body.marker.latitude, body.marker.longitude),
-  };
+async function useHandler(req, res) {
+  const { method, query, body } = req;
 
-  const fazendaRef = db.collection("fazenda").doc(query.fazenda);
-  await fazendaRef.collection("pasto").doc(query.pasto).set(data);
-  res.status(200);
-};
-
-export default async function useHandler(req, res) {
-  const db = fb.firestore();
-  const { method } = req;
-
+  console.log("Pasto");
+  console.log(method);
+  console.log(query);
+  console.log(body);
   switch (method) {
     case "GET":
-      await getAll(req, res, db);
+      if (query._id) res.json(await Pasto.findOne({ _id: query._id }));
+      else res.json(await Pasto.find(query));
       break;
     case "POST":
-      await post(req, res, db);
+      res.json(await save(body, query));
       break;
     case "PUT":
-      await put(req, res, db);
+      res.json(await Pasto.findByIdAndUpdate({ _id: body._id }, body));
+      break;
+    case "DELETE":
+      res.json(await Pasto.deleteOne({ _id: query._id }));
       break;
     default:
-      res.setHeader("Allow", ["GET", "POST"]);
-      res.status(405).end(`Method ${method} Not Allowed`);
+      res.setHeader("Allow", ["GET", "POST", "PUT", "DELETE"]);
+      res.status(405).send(`Method ${method} Not Allowed`);
   }
+  res.end();
 }
+
+export default withSession(connectDB(useHandler));

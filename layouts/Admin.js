@@ -24,7 +24,7 @@ function Admin({ children }) {
           <HeaderDefault />
         )}
 
-        <div className="px-4 md:px-10 mx-auto w-full -m-16">
+        <div className="px-4 md:px-10 mx-auto w-full -m-12">
           {children}
           <FooterAdmin />
         </div>

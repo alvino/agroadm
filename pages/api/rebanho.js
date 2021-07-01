@@ -1,79 +1,53 @@
-import fb, { Timestamp } from "server/firebase";
-import slug from "slug";
+import withSession from "middleware/withSession";
+import connectDB from "middleware/mongoose";
+import Rebanho from "models/rebanho";
 
-const getAll = async (req, res, db) => {
-  const { query } = req;
-  const { fazenda: fazendaQuery } = query;
+const save = async (body, query) => {
+  const find = await Rebanho.findOne({ pasto: body.pasto }).exec();
 
-  const fazendaRef = db.collection("fazenda").doc(fazendaQuery);
-  const rebanhoRef = fazendaRef.collection("rebanho");
-
-  const snapshot = await rebanhoRef.get();
-
-  const data = snapshot.docs.map((item) => ({
-    id: item.id,
-    path: item.ref.path,
-    ...item.data(),
-  }));
-
-  res.status(200).json(data);
+  if (find !== null) {
+    return await Rebanho.findOneAndUpdate(
+      { _id: find._id },
+      {
+        ...body,
+        fazenda: query.fazenda,
+        updateAt: Date.now(),
+      }
+    );
+  } else {
+    const res = await new Rebanho({
+      ...body,
+      fazenda: query.fazenda,
+    });
+    console.log(res);
+    return res.save();
+  }
 };
 
-const post = (req, res, db) => {
-  const { body, query } = req;
-  const { fazenda: fazendaQuery } = query;
+async function useHandler(req, res) {
+  const { method, query, body } = req;
 
-  const data = {
-    ...body,
-    createAt: new Timestamp.fromDate(new Date()),
-  };
-
-  delete data.pasto;
-
-  const fazendaRef = db.collection("fazenda").doc(fazendaQuery);
-  fazendaRef
-    .collection("rebanho")
-    .doc(slug(body.pasto))
-    .set(data)
-    .then(() => res.status(200))
-    .catch(() => res.status(500));
-};
-
-const put = (req, res, db) => {
-  const { body, query } = req;
-  const { fazenda: fazendaQuery, rebanho: rebanhoQuery } = query;
-  const data = {
-    ...body,
-    updateAt: new Timestamp.fromDate(new Date()),
-    pasto: db.doc(body.pasto),
-  };
-
-  const fazendaRef = db.collection("fazenda").doc(fazendaQuery);
-  fazendaRef
-    .collection("rebanho")
-    .doc(rebanhoQuery)
-    .set(data)
-    .then(() => res.status(200))
-    .catch(() => res.status(500));
-  res.status(200);
-};
-
-export default async function useHandler(req, res) {
-  const db = fb.firestore();
-  const { method } = req;
-
+  console.log("Rebanho");
+  console.log(method);
+  // console.log(query);
+  // console.log(body);
   switch (method) {
     case "GET":
-      await getAll(req, res, db);
+      if (query._id) res.json(await Rebanho.findOne(query));
+      else res.json(await Rebanho.find(query));
       break;
     case "POST":
-      await post(req, res, db);
+      res.json(await save(body, query));
       break;
-    case "PUT":
-      await put(req, res, db);
+
+    case "DELETE":
+      res.json(await Rebanho.deleteOne({ _id: query._id }));
       break;
     default:
-      res.setHeader("Allow", ["GET", "POST"]);
-      res.status(405).end(`Method ${method} Not Allowed`);
+      res.setHeader("Allow", ["GET", "POST", "DELETE"]);
+      res.status(405).send(`Method ${method} Not Allowed`);
   }
+  res.end();
 }
+
+export default withSession(connectDB(useHandler));

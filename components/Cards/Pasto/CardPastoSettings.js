@@ -1,7 +1,6 @@
 import React from "react";
 import { useRouter } from "next/router";
 
-import isEmpty from "util/isEmpty";
 // components
 import MapExample from "components/Maps/MapExample.js";
 
@@ -10,6 +9,7 @@ import useSWR from "swr";
 
 export default function CardPastoSettings() {
   const router = useRouter();
+  const query = router.query;
   const { fazenda } = router.query;
 
   const pasto = React.useRef();
@@ -18,39 +18,59 @@ export default function CardPastoSettings() {
   const [markers, setMarkers] = React.useState([]);
   const [posicao, setPosicao] = React.useState({});
 
-  const [id, setId] = React.useState(null);
-
-  const { data: fazendaQuery } = useSWR(`fazenda?fazenda=${fazenda}`, fetcher);
+  const { data: fazendaSWR } = useSWR(`fazenda?fazenda=${fazenda}`, fetcher);
+  const { data: pastoSWR } = useSWR(
+    `pasto?fazenda=${fazenda}&_id=${query.id}`,
+    fetcher
+  );
 
   React.useEffect(() => {
-    if (fazendaQuery) {
-      alert(JSON.stringify(fazendaQuery));
+    if (fazendaSWR) {
       setPosicao({
-        lat: fazendaQuery.marker.latitude,
-        lng: fazendaQuery.marker.longitude,
+        lat: parseFloat(fazendaSWR.marker.latitude.$numberDecimal),
+        lng: parseFloat(fazendaSWR.marker.longitude.$numberDecinal),
       });
     }
-  }, [fazendaQuery]);
+  }, [fazendaSWR]);
 
   React.useEffect(() => {
-    const query = router.query;
-
-    if (!query) {
-      pasto.current.value = query.descricao;
-      area.current.value = query.area;
+    if (pastoSWR && query) {
+      pasto.current.value = pastoSWR.descricao;
+      area.current.value = pastoSWR.area;
       setMarkers([
-        { lat: parseFloat(query.latitude), lng: parseFloat(query.longitude) },
+        {
+          lat: parseFloat(pastoSWR.marker.latitude.$numberDecimal),
+          lng: parseFloat(pastoSWR.marker.longitude.$numberDecimal),
+        },
       ]);
       setPosicao({
-        lat: parseFloat(query.latitude),
-        lng: parseFloat(query.longitude),
+        lat: parseFloat(pastoSWR.marker.latitude.$numberDecimal),
+        lng: parseFloat(pastoSWR.marker.longitude.$numberDecimal),
       });
-      setId(query.id);
     }
-  }, []);
+  }, [pastoSWR, query]);
 
   const handleMarkerClick = (event) => {
     setMarkers([{ lat: event.latLng.lat(), lng: event.latLng.lng() }]);
+  };
+
+  function sucesso() {
+    router.push(`/admin/${fazenda}/dashboard`);
+  }
+
+  const handleDelete = async (event) => {
+    axios.delete(`pasto?fazenda=${fazenda}&_id=${query.id}`).then(sucesso());
+  };
+
+  const handleUpdate = async (event) => {
+    const data = {
+      ...pastoSWR,
+      descricao: pasto.current.value,
+      area: area.current.value,
+      marker: { latitude: markers[0].lat, longitude: markers[0].lng },
+    };
+
+    axios.put(`pasto?fazenda=${fazenda}`, data).then(sucesso());
   };
 
   const handleSalvar = async (event) => {
@@ -60,15 +80,7 @@ export default function CardPastoSettings() {
       marker: { latitude: markers[0].lat, longitude: markers[0].lng },
     };
 
-    function sucesso() {
-      router.push(`/admin/${fazenda}/dashboard`);
-    }
-
-    if (id) {
-      axios.put(`pasto?fazenda=${fazenda}&pasto=${id}`, data).then(sucesso());
-    } else {
-      axios.post(`pasto?fazenda=${fazenda}`, data).then(sucesso());
-    }
+    axios.post(`pasto?fazenda=${fazenda}`, data).then(sucesso());
   };
 
   return (
@@ -79,13 +91,35 @@ export default function CardPastoSettings() {
             <h6 className="text-gray-800 text-xl font-bold">
               Cadastra Pastagem
             </h6>
-            <button
-              className="bg-gray-800 active:bg-gray-700 text-white font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
-              type="button"
-              onClick={handleSalvar}
-            >
-              Salvar
-            </button>
+            <div>
+              {query.id && (
+                <>
+                  <button
+                    className="bg-red-600 active:bg-red-500 text-white font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                    type="button"
+                    onClick={handleDelete}
+                  >
+                    Deletar
+                  </button>
+                  <button
+                    className="bg-gray-800 active:bg-gray-700 text-white font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                    type="button"
+                    onClick={handleUpdate}
+                  >
+                    Atualizar
+                  </button>
+                </>
+              )}
+              {!query.id && (
+                <button
+                  className="bg-gray-800 active:bg-gray-700 text-white font-bold uppercase text-xs px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                  type="button"
+                  onClick={handleSalvar}
+                >
+                  Salvar
+                </button>
+              )}
+            </div>
           </div>
         </div>
         <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
