@@ -1,12 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "next/app";
+// import App from "next/app";
 import Head from "next/head";
 import Router from "next/router";
 
 import { Provider } from "next-auth/client";
-
-import axios from "server/axios";
 
 import PageChange from "components/PageChange/PageChange.js";
 
@@ -51,10 +49,10 @@ function MyApp({ Component, pageProps }) {
   );
 }
 
-MyApp.getInitialProps = async (appContext) => {
-  const appProps = await App.getInitialProps(appContext);
-  const res = await axios.get("auth/session");
-  return { ...appProps, session: res.data };
-};
+// MyApp.getInitialProps = async (appContext) => {
+//   const appProps = await App.getInitialProps(appContext);
+//   const res = await axios.get("auth/session");
+//   return { ...appProps, session: res.data };
+// };
 
 export default MyApp;

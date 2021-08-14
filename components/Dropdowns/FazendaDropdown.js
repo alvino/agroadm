@@ -1,13 +1,12 @@
 import React from "react";
 import Link from "next/link";
-import useSWR from "swr";
 
 import { createPopper } from "@popperjs/core";
 
-import { fetcher } from "../../server/axios";
+import { useAxios } from "server/axios";
 
 export default function FazendaDropdown() {
-  const { data } = useSWR("fazenda", fetcher);
+  const { data, loading } = useAxios("fazenda");
   // dropdown props
   const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);
   const btnDropdownRef = React.createRef();
@@ -25,6 +24,11 @@ export default function FazendaDropdown() {
 
   return (
     <>
+      {loading && (
+        <sapn className="text-gray-800 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold">
+          carregando...
+        </sapn>
+      )}
       {data && (
         <>
           <a

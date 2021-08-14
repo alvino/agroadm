@@ -1,17 +1,12 @@
 import React from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import useSWR from "swr";
 
-import { fetcher } from "../../../server/axios";
+import { useAxios } from "server/axios";
 
 // components
 
-export default function CardTablePastos() {
-  const router = useRouter();
-  const { fazenda } = router.query;
-
-  const { data } = useSWR(`pasto?fazenda=${fazenda}`, fetcher);
+export default function CardTablePastos({ fazenda }) {
+  const { data: fazendas, loading } = useAxios(`pasto?fazenda=${fazenda}`);
 
   return (
     <>
@@ -37,26 +32,25 @@ export default function CardTablePastos() {
               </tr>
             </thead>
             <tbody>
-              {!data
+              {loading
                 ? null
-                : data.map((item, index) => {
+                : fazendas.map((item, index) => {
                     return (
-                      <>
-                        <tr key={index} className="hover:bg-gray-100">
-                          <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-no-wrap p-4 text-left">
-                            <Link
-                              href={`/admin/${item.fazenda}/pasto?id=${item._id}`}
+                      <tr key={index} className="hover:bg-gray-100">
+                        <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-no-wrap p-4 text-left">
+                          <Link href={`/admin/${fazenda}/pasto?id=${item._id}`}>
+                            <a
+                              href={`#${item._id}`}
+                              className="text-sm font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800"
                             >
-                              <a className="text-sm font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800">
-                                {item.descricao}
-                              </a>
-                            </Link>
-                          </th>
-                          <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-no-wrap p-4">
-                            {item.area}
-                          </td>
-                        </tr>
-                      </>
+                              {item.descricao}
+                            </a>
+                          </Link>
+                        </th>
+                        <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-no-wrap p-4">
+                          {item.area}
+                        </td>
+                      </tr>
                     );
                   })}
             </tbody>

@@ -1,13 +1,13 @@
 import React from "react";
 import Link from "next/link";
-import { signIn, signOut, useSession } from "next-auth/client";
+import { signIn, signOut } from "next-auth/client";
 // components
 
 import FazendaDropdown from "components/Dropdowns/FazendaDropdown.js";
 
-export default function Navbar(props) {
+export default function indexNavbar({ session }) {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [navbarOpen, setNavbarOpen] = React.useState(false);
-  const [session] = useSession();
 
   return (
     <>
@@ -57,7 +57,10 @@ export default function Navbar(props) {
                   </li>
                   <li className="flex items-center">
                     <Link href="formulario/fazenda">
-                      <a className="hover:text-gray-600 text-gray-800 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold">
+                      <a
+                        href="#fazenda"
+                        className="hover:text-gray-600 text-gray-800 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold"
+                      >
                         Cadastra Fazenda
                       </a>
                     </Link>

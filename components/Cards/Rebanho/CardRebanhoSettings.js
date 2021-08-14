@@ -1,8 +1,7 @@
 import React from "react";
 import { useRouter } from "next/router";
 
-import axios, { fetcher } from "../../../server/axios";
-import useSWR from "swr";
+import axios, {  useAxios } from "server/axios";
 
 export default function CardSettings() {
   const router = useRouter();
@@ -22,8 +21,7 @@ export default function CardSettings() {
   const femeas36Ref = React.useRef();
   const machos36Ref = React.useRef();
 
-  // const { data: fazenda } = useSWR(`fazenda?fazenda=${fazendaQuery}`, fetcher);
-  const { data: pastos } = useSWR(`pasto?fazenda=${fazendaQuery}`, fetcher);
+  const { data: pastos } = useAxios(`pasto?fazenda=${fazendaQuery}`);
 
   const handleSalvar = async (event) => {
     const data = {

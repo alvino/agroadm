@@ -1,14 +1,13 @@
 import React from "react";
-import useSWR from "swr";
 import { useRouter } from "next/router";
 
-import { fetcher } from "server/axios";
+import { useAxios } from "server/axios";
 
 export default function CardStatsFemeas() {
   const router = useRouter();
   const { fazenda: fazendaQuery } = router.query;
 
-  const { data } = useSWR(`rebanho?fazenda=${fazendaQuery}`, fetcher);
+  const { data } = useAxios(`rebanho?fazenda=${fazendaQuery}`);
 
   return (
     <>

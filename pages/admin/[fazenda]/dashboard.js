@@ -9,9 +9,10 @@ import CardSocialTraffic from "components/Cards/CardSocialTraffic.js";
 
 // layout for page
 
-import Admin from "layouts/Admin.js";
+import AdminStats from "layouts/AdminStats.js";
+import axios from "server/axios";
 
-export default function Dashboard() {
+function Dashboard({ fazenda, fazendas }) {
   return (
     <>
       <div className="flex flex-wrap">
@@ -22,7 +23,7 @@ export default function Dashboard() {
       </div>
       <div className="flex flex-wrap mt-4">
         <div className="w-full xl:w-8/12 mb-12 xl:mb-0 px-4">
-          <CardTablePastos />
+          <CardTablePastos fazenda={fazenda} fazendas={fazendas} />
         </div>
         <div className="w-full xl:w-4/12 px-4">
           {/* <CardSocialTraffic /> */}
@@ -32,4 +33,17 @@ export default function Dashboard() {
   );
 }
 
-Dashboard.layout = Admin;
+Dashboard.getInitialProps = async (ctx) => {
+  const { fazenda } = ctx.query;
+  const resPasto = await axios.get(`pasto`, { params: { fazenda } });
+  const fazendas = resPasto.data;
+
+  return {
+    fazenda,
+    fazendas,
+  };
+};
+
+Dashboard.layout = AdminStats;
+
+export default Dashboard;

@@ -3,7 +3,10 @@ import connectDB from "middleware/mongoose";
 import Rebanho from "models/rebanho";
 
 const save = async (body, query) => {
-  const find = await Rebanho.findOne({ pasto: body.pasto }).exec();
+  const find = await Rebanho.findOne({
+    pasto: body.pasto,
+    fazenda: query.fazenda,
+  }).exec();
 
   if (find !== null) {
     return await Rebanho.findOneAndUpdate(
@@ -27,8 +30,8 @@ const save = async (body, query) => {
 async function useHandler(req, res) {
   const { method, query, body } = req;
 
-  console.log("Rebanho");
-  console.log(method);
+  // console.log("Rebanho");
+  // console.log(method);
   // console.log(query);
   // console.log(body);
   switch (method) {

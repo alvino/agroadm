@@ -3,23 +3,26 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { signOut } from "next-auth/client";
 
-import NotificationDropdown from "components/Dropdowns/NotificationDropdown.js";
-import UserDropdown from "components/Dropdowns/UserDropdown.js";
+import { fetcher } from "server/axios";
+import { useAxios } from "../../server/axios";
 
-function LinkSidebarExterno(props) {
-  return (
-    <>
-      <a
-        href={props.href}
-        target="_blank"
-        className="text-gray-800 hover:text-gray-600 text-sm block mb-4 no-underline font-semibold"
-      >
-        <i className={`${props.classIcon} mr-2 text-gray-400 text-base`}></i>
-        {props.children}
-      </a>
-    </>
-  );
-}
+// import NotificationDropdown from "components/Dropdowns/NotificationDropdown.js";
+// import UserDropdown from "components/Dropdowns/UserDropdown.js";
+
+// function LinkSidebarExterno(props) {
+//   return (
+//     <>
+//       <a
+//         href={props.href}
+//         // target="_blank"
+//         className="text-gray-800 hover:text-gray-600 text-sm block mb-4 no-underline font-semibold"
+//       >
+//         <i className={`${props.classIcon} mr-2 text-gray-400 text-base`}></i>
+//         {props.children}
+//       </a>
+//     </>
+//   );
+// }
 
 function LinkSidebarInterno(props) {
   const router = useRouter();
@@ -81,6 +84,8 @@ export default function Sidebar() {
   const router = useRouter();
   const { fazenda } = router.query;
 
+  const { data: session, loading } = useAxios(`auth/session`);
+
   const handlerSignout = () => {
     signOut();
     router.push("/");
@@ -108,15 +113,6 @@ export default function Sidebar() {
             </a>
           </Link>
 
-          {/* User */}
-          <ul className="md:hidden items-center flex flex-wrap list-none">
-            <li className="inline-block relative">
-              <NotificationDropdown />
-            </li>
-            <li className="inline-block relative">
-              <UserDropdown />
-            </li>
-          </ul>
           {/* Collapse */}
           <div
             className={
@@ -130,7 +126,7 @@ export default function Sidebar() {
                 <div className="w-6/12">
                   <Link href="/">
                     <a
-                      href="#pablo"
+                      href="#home"
                       className="md:block text-left md:pb-2 text-gray-700 mr-0 inline-block whitespace-no-wrap text-sm uppercase font-bold p-4 px-0"
                     >
                       agroadm
@@ -148,6 +144,22 @@ export default function Sidebar() {
                 </div>
               </div>
             </div>
+            <hr className="my-4 md:min-w-full" />
+            {loading && "carregndo..."}
+            {session && (
+              <div className="items-center flex ">
+                <span className="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full">
+                  <img
+                    alt="..."
+                    className="w-full rounded-full align-middle border-none shadow-lg"
+                    src={session.user.image}
+                  />
+                </span>
+                <div className="text-gray-800 uppercase md:inline-block font-semibold  mx-4">
+                  {session.user.name}
+                </div>
+              </div>
+            )}
             {/* Form */}
             <form className="mt-6 mb-4 md:hidden">
               <div className="mb-3 pt-0">
@@ -169,14 +181,14 @@ export default function Sidebar() {
 
               <LinkSidebarInterno
                 href={`/admin/${fazenda}/pasto`}
-                classIcon="fas fa-vector-square"
+                classIcon="fas fa-newspaper"
               >
                 pasto
               </LinkSidebarInterno>
 
               <LinkSidebarInterno
                 href={`/admin/${fazenda}/rebanho`}
-                classIcon="fas fa-vector-square"
+                classIcon="fas fa-newspaper"
               >
                 rebanho
               </LinkSidebarInterno>

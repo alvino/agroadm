@@ -13,7 +13,9 @@ const MapExampleScript = withScriptjs(
   withGoogleMap((props) => (
     <GoogleMap
       defaultZoom={props.zoom || 12}
-      defaultCenter={props.defaultCenter || { lat: 40.748817, lng: -73.985428 }}
+      defaultCenter={
+        props.defaultCenter || { lat: -14.182526999999999, lng: -49.4292981 }
+      }
       defaultMapTypeId="satellite"
       onClick={props.onMarkerClick}
     >
@@ -33,9 +35,14 @@ function MapExample(props) {
   const [position, setPosition] = React.useState(null);
 
   React.useEffect(() => {
-    navigator.geolocation.getCurrentPosition(function (geo) {
-      setPosition({ lat: geo.coords.latitude, lng: geo.coords.longitude });
-    });
+    async function init() {
+      await navigator.geolocation.getCurrentPosition(function (geo) {
+        console.log(geo.coords);
+        setPosition({ lat: geo.coords.latitude, lng: geo.coords.longitude });
+      });
+    }
+    console.log("MapExample", props.def);
+    init();
   }, []);
 
   return (

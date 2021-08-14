@@ -5,7 +5,7 @@ import CardFazendaSettings from "components/Cards/Fazenda/CardFazendaSettings.js
 // layout for page
 import Admin from "layouts/Admin.js";
 
-export default function Fazenda() {
+function Fazenda() {
   return (
     <>
       <div className="flex flex-wrap">
@@ -18,3 +18,5 @@ export default function Fazenda() {
 }
 
 Fazenda.layout = Admin;
+
+export default Fazenda;
